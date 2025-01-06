@@ -1,1 +1,3 @@
-print("Load script sucess!")
+while true do
+print("hi")
+end
