@@ -15,12 +15,12 @@ local OrionLib = {
 	Themes = {
     -- Tema Default
     PurpleNeon = {
-        Main = Color3.fromRGB(25, 25, 25),
-        Second = Color3.fromRGB(32, 32, 32),
-        Stroke = Color3.fromRGB(60, 60, 60),
-        Divider = Color3.fromRGB(60, 60, 60),
-        Text = Color3.fromRGB(240, 240, 240),
-        TextDark = Color3.fromRGB(150, 150, 150)
+        Main = Color3.fromRGB(28, 14, 45),
+        Second = Color3.fromRGB(40, 19, 63),
+        Stroke = Color3.fromRGB(147, 51, 234),
+        Divider = Color3.fromRGB(124, 58, 237),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(199, 157, 237)
     },
 
     -- Tema Roxo Neon
@@ -45,12 +45,12 @@ local OrionLib = {
 
     -- Tema Sunset
     Default = {
-        Main = Color3.fromRGB(39, 15, 15),
-        Second = Color3.fromRGB(51, 21, 21),
-        Stroke = Color3.fromRGB(251, 146, 60),
-        Divider = Color3.fromRGB(234, 88, 12),
-        Text = Color3.fromRGB(254, 243, 199),
-        TextDark = Color3.fromRGB(251, 146, 60)
+        Main = Color3.fromRGB(28, 14, 45),
+        Second = Color3.fromRGB(40, 19, 63),
+        Stroke = Color3.fromRGB(147, 51, 234),
+        Divider = Color3.fromRGB(124, 58, 237),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(199, 157, 237)
     },
 
     -- Tema Mint
