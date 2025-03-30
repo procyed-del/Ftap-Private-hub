@@ -1649,7 +1649,7 @@ function ElementFunction:AddSection(SectionConfig)
 				SetChildren(SetProps(MakeElement("TFrame"), {
 					AnchorPoint = Vector2.new(0, 0),
 					Size = UDim2.new(1, 0, 1, -24),
-					Position = UDim2.new(0.5, 0, 0.5, 23)),
+					Position = UDim2.new(0, 0, 0, 23),
 					Name = "Holder"
 				}), {
 					MakeElement("List", 0, 6)
