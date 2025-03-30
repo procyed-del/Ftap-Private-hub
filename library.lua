@@ -661,7 +661,14 @@ function OrionLib:MakeWindow(WindowConfig)
 		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
 			MainWindow.Visible = not MainWindow.Visible
 			if not MainWindow.Visible then
-			UIHidden = true
+			MainWindow.Visible = false
+		UIHidden = true
+		OrionLib:MakeNotification({
+			Name = "Interface Hidden",
+			Content = "Tap M to reopen the interface",
+			Time = 5
+		})
+		WindowConfig.CloseCallback()
 			end
 		end
 	end)
