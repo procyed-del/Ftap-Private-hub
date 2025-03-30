@@ -659,9 +659,13 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
-			MainWindow.Visible = true
+			MainWindow.Visible = not MainWindow.Visible
+			if not MainWindow.Visible then
+			UIHidden = true
+			end
 		end
 	end)
+			
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
@@ -1710,11 +1714,6 @@ function OrionLib:MakeWindow(WindowConfig)
 		return ElementFunction   
 	end  
 	
-	OrionLib:MakeNotification({
-		Name = "UI Library Upgrade",
-		Content = "New UI Library Available at sirius.menu/discord and sirius.menu/rayfield",
-		Time = 5
-	})
 	
 
 	
