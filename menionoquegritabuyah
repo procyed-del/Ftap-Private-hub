@@ -1,0 +1,125 @@
+getgenv().gethui = function() return game.CoreGui end
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/procyed-del/Ftap-Private-hub/refs/heads/main/library.lua')))()
+
+local Window = OrionLib:MakeWindow({
+	Name = "Title of the library",
+	HidePremium = false,
+	SaveConfig = true,
+	ConfigFolder = "OrionTest"
+})
+
+local PS = game.Players
+_G.ligado = false
+local delay = 1
+local falatorio = "Banana"
+local dropdown = nil
+local sounds = {
+	"monkey", "Hehe", "oo", "Haha", "Whistle", "Dad", "Mom", "oi", "sad", "yey",
+	"kick", "pew", "grr", "one", "two", "three", "four", "five", "blablabla",
+	"ew", "pizza", "num", "lick", "sing", "yeehaw", "elite", "sick", "oof",
+	"caw", "ahh", "sh", "ree"
+}
+
+local function findClosestMatch(input, options)
+	local bestMatch = nil
+	local bestScore = -1
+	input = input:lower()
+
+	for _, option in ipairs(options) do
+		local score = 0
+		local opt = option:lower()
+
+		for i = 1, math.min(#input, #opt) do
+			if input:sub(i, i) == opt:sub(i, i) then
+				score = score + 1
+			else
+				break
+			end
+		end
+
+		if score > bestScore then
+			bestScore = score
+			bestMatch = option
+		end
+	end
+
+	return bestMatch
+end
+
+local Tab = Window:MakeTab({
+	Name = "sounds",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "main"
+})
+
+Tab:AddTextbox({
+	Name = "Search sound",
+	Default = "",
+	TextDisappear = true,
+	Callback = function(Value)
+		local match = findClosestMatch(Value, sounds)
+		if match then
+		dropdown:Set(match)
+			falatorio = match
+			OrionLib:MakeNotification({
+				Name = "Sound Found",
+				Content = "Selected sound: " .. match,
+				Time = 2
+			})
+		else
+			OrionLib:MakeNotification({
+				Name = "No Match",
+				Content = "Couldn't find a similar sound.",
+				Time = 2
+			})
+		end
+	end
+})
+dropdown = Tab:AddDropdown({
+	Name = "Select sound",
+	Default = "Banana",
+	Options = sounds,
+	Callback = function(Value)
+		falatorio = Value
+	end
+})
+
+Tab:AddSlider({
+	Name = "Delay per sound",
+	Min = 0.01,
+	Max = 5,
+	Default = 1,
+	Color = Color3.fromRGB(255, 255, 255),
+	Increment = 0.01,
+	ValueName = "",
+	Callback = function(Value)
+		delay = Value
+	end
+})
+
+local toggle = Tab:AddToggle({
+	Name = "Turn On/Off",
+	Default = false,
+	Callback = function(Value)
+		_G.ligado = Value
+		while _G.ligado do
+			task.wait(delay)
+			PS:Chat(falatorio)
+		end
+	end
+})
+
+
+Tab:AddBind({
+	Name = "On/Off keybind",
+	Default = Enum.KeyCode.F,
+	Hold = false,
+	Callback = function()
+        toggle:Set(not _G.ligado)
+	end    
+})
