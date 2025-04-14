@@ -657,21 +657,26 @@ function OrionLib:MakeWindow(WindowConfig)
 		WindowConfig.CloseCallback()
 	end)
 
-	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.M then
+	local UserInputService = game:GetService("UserInputService")
+
+AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
+	if Input.KeyCode == Enum.KeyCode.M then
+		if UserInputService:GetFocusedTextBox() == nil and not GameProcessed then
 			MainWindow.Visible = not MainWindow.Visible
+
 			if not MainWindow.Visible then
-			MainWindow.Visible = false
-		UIHidden = true
-		OrionLib:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap M to reopen the interface",
-			Time = 5
-		})
-		WindowConfig.CloseCallback()
+				UIHidden = true
+				OrionLib:MakeNotification({
+					Name = "Interface Hidden",
+					Content = "Tap M to reopen the interface",
+					Time = 5
+				})
+				WindowConfig.CloseCallback()
 			end
 		end
-	end)
+	end
+end)
+
 			
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
