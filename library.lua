@@ -1,3 +1,19 @@
+local success, result = pcall(function()
+    return _G.firsttimeinjection
+end)
+
+if success then
+    if result then
+    return
+    end
+else
+    print("aaa")
+    return
+end
+_G.firsttimeinjection = true
+
+
+
 
 
 local UserInputService = game:GetService("UserInputService")
