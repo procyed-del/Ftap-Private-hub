@@ -5,7 +5,7 @@ end)
 local player = game.Players.LocalPlayer
 local userInputService = game:GetService("UserInputService")
 
-
+userInputService.MouseIconEnabled = true
 if success then
     if result then
     return
