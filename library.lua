@@ -2,17 +2,43 @@ getgenv().gethui = function() return game.CoreGui end
 local success, result = pcall(function()
     return _G.firsttimeinjection
 end)
+local player = game.Players.LocalPlayer
+local userInputService = game:GetService("UserInputService")
+
 
 if success then
     if result then
     return
     end
 else
-    print("aaa")
     return
 end
-_G.firsttimeinjection = false
+_G.firsttimeinjection = true
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
+-- Cria um ScreenGui persistente fora da PlayerGui (em um LocalScript)
+local screenGui = playerGui:FindFirstChild("MyPersistentScreenGui")
+
+-- Se não existir, cria a ScreenGui persistente
+if not screenGui then
+    screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MyPersistentScreenGui"
+    screenGui.Parent = playerGui
+end
+
+screenGui.ResetOnSpawn = false
+
+
+local buttonmodal = Instance.new("TextButton")
+buttonmodal.Size = UDim2.new(0, 200, 0, 50) -- Tamanho do botão
+buttonmodal.Position = UDim2.new(0.5, -100, 0.5, -25) -- Posição centralizada
+buttonmodal.BackgroundTransparency = 1 -- Tornando o botão invisível
+buttonmodal.Text = "" -- Nenhum texto
+buttonmodal.Parent = screenGui
+
+
+buttonmodal.Modal = true
 
 
 
@@ -52,7 +78,7 @@ local Success, Response = pcall(function()
 end)
 
 if not Success then
-	warn("\nOrion Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
+	warn("\n⌞Ra-Hub⌝ - Failed to load Feather Icons. Error code: " .. Response .. "\n")
 end	
 
 local function GetIcon(IconName)
@@ -239,7 +265,7 @@ local function LoadCfg(Config)
 				end    
 			end)
 		else
-			warn("Orion Library Config Loader - Could not find ", a ,b)
+			warn("⌞Ra-Hub⌝Config Loader - Could not find ", a ,b)
 		end
 	end)
 end
@@ -492,7 +518,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroText = WindowConfig.IntroText or "Orion Library"
+	WindowConfig.IntroText = WindowConfig.IntroText or "⌞Ra-Hub⌝"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
@@ -676,10 +702,12 @@ function OrionLib:MakeWindow(WindowConfig)
 
 AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
 	if Input.KeyCode == Enum.KeyCode.M then
+	buttonmodal.Modal = not buttonmodal.Modal
 		if UserInputService:GetFocusedTextBox() == nil and not GameProcessed then
 			MainWindow.Visible = not MainWindow.Visible
 
 			if not MainWindow.Visible then
+userInputService.MouseIconEnabled = false
 				UIHidden = true
 				OrionLib:MakeNotification({
 					Name = "Interface Hidden",
@@ -687,6 +715,8 @@ AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
 					Time = 5
 				})
 				WindowConfig.CloseCallback()
+							else
+userInputService.MouseIconEnabled = true
 			end
 		end
 	end
