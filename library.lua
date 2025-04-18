@@ -1350,6 +1350,11 @@ end
     end)
 
     local function AddPlayerButton(player)
+        -- Verifica se o jogador existe antes de tentar obter a miniatura
+        if not player or not player:IsA("Player") then
+            return
+        end
+        
         -- Tenta obter a miniatura de cabeça do jogador de maneira segura
         local success, thumbnail = pcall(function()
             return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
@@ -1457,6 +1462,7 @@ end
 
     return Dropdown
 end
+
 
 
 
