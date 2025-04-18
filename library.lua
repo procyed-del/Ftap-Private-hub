@@ -1350,9 +1350,18 @@ end
     end)
 
     local function AddPlayerButton(player)
+        local thumbnail, err = pcall(function()
+            return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
+        end)
+
+        -- Se não conseguir obter a thumbnail, usa uma imagem padrão ou um valor alternativo
+        if not thumbnail then
+            thumbnail = "rbxassetid://7072706796"  -- Coloque um ID de imagem padrão aqui, se necessário
+        end
+
         local PlayerBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
             MakeElement("Corner", 0, 6),
-            AddThemeObject(SetProps(MakeElement("Image", player:GetThumbnailAsync(ThumbnailSize.HeadShot)), {
+            AddThemeObject(SetProps(MakeElement("Image", thumbnail), {
                 Position = UDim2.new(0, 8, 0, 0),
                 Size = UDim2.new(0, 24, 0, 24),
                 Name = "Thumbnail"
@@ -1447,6 +1456,7 @@ end
 
     return Dropdown
 end
+
 
 
 			function ElementFunction:AddBind(BindConfig)
