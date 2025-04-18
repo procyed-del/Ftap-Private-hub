@@ -1200,10 +1200,13 @@ end
 				end)  
 local Players = game:GetService("Players")
 
-function ElementFunction:AddDropdownPlayer(DropdownConfig)
+function TabClass:AddDropdownPlayer(DropdownConfig)
     DropdownConfig = DropdownConfig or {}
     DropdownConfig.Name     = DropdownConfig.Name     or "Select Player"
     DropdownConfig.Callback = DropdownConfig.Callback or function() end
+
+    local parent = DropdownConfig.Parent or self.Container or self
+
 
     local Dropdown = {
         Toggled  = false,
