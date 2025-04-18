@@ -1122,7 +1122,7 @@ end
 				end
 				return Slider
 			end  
-			function ElementFunction:AddDropdown(DropdownConfig)
+			function TabClass:AddDropdownPlayer(DropdownConfig)
 				DropdownConfig = DropdownConfig or {}
 				DropdownConfig.Name = DropdownConfig.Name or "Dropdown"
 				DropdownConfig.Options = DropdownConfig.Options or {}
