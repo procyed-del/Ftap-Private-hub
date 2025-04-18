@@ -1122,7 +1122,7 @@ end
 				end
 				return Slider
 			end  
-			function TabClass:AddDropdown(DropdownConfig)
+			function ElementFunction:AddDropdown(DropdownConfig)
 				DropdownConfig = DropdownConfig or {}
 				DropdownConfig.Name = DropdownConfig.Name or "Dropdown"
 				DropdownConfig.Options = DropdownConfig.Options or {}
@@ -1198,6 +1198,7 @@ end
 				AddConnection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 					DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
 				end)  
+
 function ElementFunction:AddDropdownPlayer(DropdownConfig)
 	DropdownConfig = DropdownConfig or {}
 	DropdownConfig.Name = DropdownConfig.Name or "Selecionar Jogador"
