@@ -1198,6 +1198,214 @@ end
 				AddConnection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 					DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
 				end)  
+local Players = game:GetService("Players")
+
+function ElementFunction:AddDropdownPlayer(DropdownConfig)
+    DropdownConfig = DropdownConfig or {}
+    DropdownConfig.Name     = DropdownConfig.Name     or "Select Player"
+    DropdownConfig.Callback = DropdownConfig.Callback or function() end
+
+    local Dropdown = {
+        Toggled  = false,
+        Buttons  = {},
+        Value    = nil,
+        Type     = "DropdownPlayer",
+    }
+
+    -- TÍTULO
+    local Title = Instance.new("TextLabel")
+    Title.Name              = "Label_" .. DropdownConfig.Name
+    Title.Text              = DropdownConfig.Name
+    Title.Font              = Enum.Font.GothamBold
+    Title.TextSize          = 14
+    Title.TextColor3        = Color3.fromRGB(220,220,220)
+    Title.BackgroundTransparency = 1
+    Title.Size              = UDim2.new(1, 0, 0, 18)
+    Title.Parent            = ItemParent
+
+    -- CONTÊINER
+    local Container = Instance.new("Frame")
+    Container.Name             = "DropdownPlayerContainer"
+    Container.Size             = UDim2.new(1, 0, 0, 38)
+    Container.Position         = UDim2.new(0, 0, 0, 18)
+    Container.ClipsDescendants = true
+    Container.BackgroundTransparency = 1
+    Container.Parent           = ItemParent
+
+    -- CABEÇALHO
+    local Header = Instance.new("TextButton")
+    Header.Name            = "Header"
+    Header.Size            = UDim2.new(1, 0, 1, 0)
+    Header.AutoButtonColor = false
+    Header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Header.BorderSizePixel = 0
+    Header.Parent          = Container
+
+    local HeaderCorner = Instance.new("UICorner")
+    HeaderCorner.CornerRadius = UDim.new(0, 0.08)
+    HeaderCorner.Parent       = Header
+
+    local Avatar = Instance.new("ImageLabel")
+    Avatar.Name            = "Avatar"
+    Avatar.Size            = UDim2.new(nil, 32, nil, 32)
+    Avatar.Position        = UDim2.new(0, 8, 0.5, -16)
+    Avatar.BackgroundTransparency = 1
+    Avatar.Parent          = Header
+
+    local SelectedDisplay = Instance.new("TextLabel")
+    SelectedDisplay.Name           = "SelectedDisplay"
+    SelectedDisplay.Text           = "Nenhum"
+    SelectedDisplay.Font           = Enum.Font.GothamBold
+    SelectedDisplay.TextSize       = 14
+    SelectedDisplay.TextXAlignment = Enum.TextXAlignment.Left
+    SelectedDisplay.TextColor3     = Color3.fromRGB(240,240,240)
+    SelectedDisplay.BackgroundTransparency = 1
+    SelectedDisplay.Position       = UDim2.new(0, 8+32+8, 0, 4)
+    SelectedDisplay.Size           = UDim2.new(1, -(8+32+8)-24, 0, 18)
+    SelectedDisplay.Parent         = Header
+
+    local SelectedUser = Instance.new("TextLabel")
+    SelectedUser.Name           = "SelectedUser"
+    SelectedUser.Text           = ""
+    SelectedUser.Font           = Enum.Font.Gotham
+    SelectedUser.TextSize       = 12
+    SelectedUser.TextXAlignment = Enum.TextXAlignment.Left
+    SelectedUser.TextColor3     = Color3.fromRGB(200,200,200)
+    SelectedUser.BackgroundTransparency = 1
+    SelectedUser.Position       = UDim2.new(0, 8+32+8, 0, 22)
+    SelectedUser.Size           = UDim2.new(1, -(8+32+8)-24, 0, 14)
+    SelectedUser.Parent         = Header
+
+    local Arrow = Instance.new("ImageLabel")
+    Arrow.Name            = "Arrow"
+    Arrow.Image           = "rbxassetid://7072706796"
+    Arrow.Size            = UDim2.new(0, 16, 0, 16)
+    Arrow.Position        = UDim2.new(1, -20, 0.5, -8)
+    Arrow.BackgroundTransparency = 1
+    Arrow.Rotation        = 0
+    Arrow.Parent          = Header
+
+    -- LISTA ESCONDIDA
+    local ListFrame = Instance.new("Frame")
+    ListFrame.Name             = "ListFrame"
+    ListFrame.Size             = UDim2.new(1, 0, 0, 0)
+    ListFrame.Position         = UDim2.new(0, 0, 1, 0)
+    ListFrame.ClipsDescendants = true
+    ListFrame.BackgroundTransparency = 1
+    ListFrame.Parent           = Container
+
+    local Scroll = Instance.new("ScrollingFrame")
+    Scroll.Name               = "Scroll"
+    Scroll.Size               = UDim2.new(1, 0, 1, 0)
+    Scroll.CanvasSize         = UDim2.new(0, 0, 0, 0)
+    Scroll.BackgroundTransparency = 1
+    Scroll.ScrollBarThickness = 4
+    Scroll.Parent             = ListFrame
+
+    local UIList = Instance.new("UIListLayout")
+    UIList.SortOrder = Enum.SortOrder.LayoutOrder
+    UIList.Padding   = UDim.new(0, 4)
+    UIList.Parent    = Scroll
+
+    UIList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        Scroll.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y)
+        ListFrame.Size   = UDim2.new(1, 0, 0,
+            math.clamp(UIList.AbsoluteContentSize.Y, 0, 5 * 48 + 4 * 4))
+    end)
+
+    -- ATUALIZA LISTA
+    local function updatePlayerList()
+        -- limpa antigos
+        for _, v in ipairs(Scroll:GetChildren()) do
+            if v:IsA("TextButton") then v:Destroy() end
+        end
+
+        for _, plr in ipairs(Players:GetPlayers()) do
+            local btn = Instance.new("TextButton")
+            btn.Name             = "Item_" .. plr.UserId
+            btn.Size             = UDim2.new(1, 0, 0, 48)
+            btn.BackgroundColor3 = Color3.fromRGB(45,45,45)
+            btn.BorderSizePixel  = 0
+            btn.AutoButtonColor  = false
+            btn.Parent           = Scroll
+
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, 6)
+            corner.Parent       = btn
+
+            local img = Instance.new("ImageLabel")
+            img.Name            = "Avatar"
+            img.Size            = UDim2.new(nil, 40, nil, 40)
+            img.Position        = UDim2.new(0, 8, 0.5, -20)
+            img.BackgroundTransparency = 1
+            img.Parent          = btn
+
+            -- thumbnail async
+            spawn(function()
+                img.Image = Players:GetUserThumbnailAsync(
+                    plr.UserId,
+                    Enum.ThumbnailType.HeadShot,
+                    Enum.ThumbnailSize.Size48x48
+                )
+            end)
+
+            local dn = Instance.new("TextLabel")
+            dn.Name           = "DisplayName"
+            dn.Text           = plr.DisplayName
+            dn.Font           = Enum.Font.GothamBold
+            dn.TextSize       = 14
+            dn.TextColor3     = Color3.fromRGB(240,240,240)
+            dn.BackgroundTransparency = 1
+            dn.Position       = UDim2.new(0, 8+40+8, 0, 6)
+            dn.Size           = UDim2.new(1, -(8+40+8), 0, 18)
+            dn.TextXAlignment = Enum.TextXAlignment.Left
+            dn.Parent         = btn
+
+            local un = Instance.new("TextLabel")
+            un.Name           = "Username"
+            un.Text           = plr.Name
+            un.Font           = Enum.Font.Gotham
+            un.TextSize       = 12
+            un.TextColor3     = Color3.fromRGB(200,200,200)
+            un.BackgroundTransparency = 1
+            un.Position       = UDim2.new(0, 8+40+8, 0, 6+20)
+            un.Size           = UDim2.new(1, -(8+40+8), 0, 16)
+            un.TextXAlignment = Enum.TextXAlignment.Left
+            un.Parent         = btn
+
+            btn.MouseButton1Click:Connect(function()
+                Dropdown.Value = plr.Name
+                SelectedDisplay.Text = plr.DisplayName
+                SelectedUser.Text    = plr.Name
+                Dropdown.Toggled = false
+                Arrow.Rotation   = 0
+                ListFrame:TweenSize(UDim2.new(1,0,0,0), "Out", "Quad", 0.2, true)
+                DropdownConfig.Callback(plr)
+            end)
+        end
+    end
+
+    Players.PlayerAdded:Connect(updatePlayerList)
+    Players.PlayerRemoving:Connect(updatePlayerList)
+    updatePlayerList()
+
+    -- TOGGLE ABRE/FECHA
+    Header.MouseButton1Click:Connect(function()
+        Dropdown.Toggled = not Dropdown.Toggled
+        Arrow.Rotation   = Dropdown.Toggled and 180 or 0
+        if Dropdown.Toggled then
+            ListFrame:TweenSize(
+                UDim2.new(1,0,0, UIList.AbsoluteContentSize.Y),
+                "Out", "Quad", 0.2, true
+            )
+        else
+            ListFrame:TweenSize(UDim2.new(1,0,0,0), "Out", "Quad", 0.2, true)
+        end
+    end)
+
+    return Dropdown
+end
+
 
 				local function AddOptions(Options)
 					for _, Option in pairs(Options) do
