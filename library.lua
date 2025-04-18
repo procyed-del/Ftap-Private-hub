@@ -1350,12 +1350,12 @@ end
     end)
 
     local function AddPlayerButton(player)
-        -- Verifica se o jogador existe antes de tentar obter a miniatura
-        if not player or not player:IsA("Player") then
+        -- Verifica se o jogador existe no jogo
+        if not player or not player:IsA("Player") or not game.Players:FindFirstChild(player.Name) then
             return
         end
-        
-        -- Tenta obter a miniatura de cabeça do jogador de maneira segura
+
+        -- Tenta obter a miniatura de cabeça do jogador
         local success, thumbnail = pcall(function()
             return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
         end)
@@ -1365,6 +1365,7 @@ end
             thumbnail = "rbxassetid://7072706796"  -- Coloque o ID de imagem padrão aqui, se necessário
         end
 
+        -- Criação do botão do jogador
         local PlayerBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
             MakeElement("Corner", 0, 6),
             AddThemeObject(SetProps(MakeElement("Image", thumbnail), {
@@ -1389,6 +1390,7 @@ end
             ClipsDescendants = true
         }), "Divider")
 
+        -- Adiciona ação de clique
         AddConnection(PlayerBtn.MouseButton1Click, function()
             Dropdown:Set(player.Name)
             SaveCfg(game.GameId)
@@ -1462,6 +1464,7 @@ end
 
     return Dropdown
 end
+
 
 
 
