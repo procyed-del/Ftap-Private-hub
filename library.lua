@@ -1355,9 +1355,9 @@ end
             return
         end
 
-        -- Usando o método GetUserThumbnailAsync para obter a miniatura do avatar
+        -- Tenta obter a miniatura de cabeça do jogador
         local success, thumbnail = pcall(function()
-            return player:GetUserThumbnailAsync(Enum.ThumbnailType.HeadShot)
+            return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
         end)
 
         -- Se a obtenção da thumbnail falhar, usamos uma imagem padrão
@@ -1464,6 +1464,7 @@ end
 
     return Dropdown
 end
+
 
 
 
