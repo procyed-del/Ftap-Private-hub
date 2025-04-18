@@ -11,7 +11,7 @@ else
     print("aaa")
     return
 end
-_G.firsttimeinjection = true
+_G.firsttimeinjection = false
 
 
 
