@@ -1277,6 +1277,7 @@ end
 				end
 				return Dropdown
 			end
+
 			function ElementFunction:AddPlayerListDropdown(DropdownConfig)
     DropdownConfig = DropdownConfig or {}
     DropdownConfig.Name = DropdownConfig.Name or "Players"
@@ -1284,6 +1285,9 @@ end
     DropdownConfig.Callback = DropdownConfig.Callback or function() end
     DropdownConfig.Flag = DropdownConfig.Flag or nil
     DropdownConfig.Save = DropdownConfig.Save or false
+
+    local Players = game:GetService("Players")
+    local TweenService = game:GetService("TweenService")
 
     local Dropdown = {Value = DropdownConfig.Default, Players = {}, Buttons = {}, Toggled = false, Type = "PlayerDropdown", Save = DropdownConfig.Save}
     local MaxElements = 5
@@ -1350,22 +1354,19 @@ end
     end)
 
     local function AddPlayerButton(player)
-        -- Verifica se o jogador existe no jogo
-        if not player or not player:IsA("Player") or not game.Players:FindFirstChild(player.Name) then
+        if not player or not player:IsA("Player") or not Players:FindFirstChild(player.Name) then
             return
         end
 
-        -- Tenta obter a miniatura de cabeça do jogador
+        -- Obtem a thumbnail do cliente (forma correta)
         local success, thumbnail = pcall(function()
-            return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
+            return Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
         end)
 
-        -- Se a obtenção da thumbnail falhar, usamos uma imagem padrão
         if not success or not thumbnail then
-            thumbnail = "rbxassetid://7072706796"  -- Coloque o ID de imagem padrão aqui, se necessário
+            thumbnail = "rbxassetid://7072706796" -- imagem padrão
         end
 
-        -- Criação do botão do jogador
         local PlayerBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
             MakeElement("Corner", 0, 6),
             AddThemeObject(SetProps(MakeElement("Image", thumbnail), {
@@ -1390,7 +1391,6 @@ end
             ClipsDescendants = true
         }), "Divider")
 
-        -- Adiciona ação de clique
         AddConnection(PlayerBtn.MouseButton1Click, function()
             Dropdown:Set(player.Name)
             SaveCfg(game.GameId)
@@ -1400,20 +1400,18 @@ end
     end
 
     function Dropdown:Refresh()
-        -- Limpa os botões antigos
         for _, v in pairs(Dropdown.Buttons) do
             v:Destroy()
         end
         table.clear(Dropdown.Buttons)
 
-        -- Adiciona botões para os jogadores atuais
-        for _, player in pairs(game.Players:GetPlayers()) do
+        for _, player in pairs(Players:GetPlayers()) do
             AddPlayerButton(player)
         end
     end
 
     function Dropdown:Set(Value)
-        if not game.Players:FindFirstChild(Value) then
+        if not Players:FindFirstChild(Value) then
             Dropdown.Value = "..."
             DropdownFrame.F.Selected.Text = Dropdown.Value
             for _, v in pairs(Dropdown.Buttons) do
@@ -1430,17 +1428,18 @@ end
             TweenService:Create(v, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
             TweenService:Create(v.DisplayName, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
         end
+
         TweenService:Create(Dropdown.Buttons[Value], TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
         TweenService:Create(Dropdown.Buttons[Value].DisplayName, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
         return DropdownConfig.Callback(Dropdown.Value)
     end
 
-    -- Ouve as mudanças nos jogadores
-    game.Players.PlayerAdded:Connect(function(player)
+    Players.PlayerAdded:Connect(function()
         Dropdown:Refresh()
     end)
 
-    game.Players.PlayerRemoving:Connect(function(player)
+    Players.PlayerRemoving:Connect(function()
         Dropdown:Refresh()
     end)
 
@@ -1464,6 +1463,7 @@ end
 
     return Dropdown
 end
+
 
 
 
