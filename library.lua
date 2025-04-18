@@ -1278,7 +1278,7 @@ end
 				return Dropdown
 			end
 
-			function ElementFunction:AddPlayerListDropdown(DropdownConfig)
+function ElementFunction:AddPlayerListDropdown(DropdownConfig)
     DropdownConfig = DropdownConfig or {}
     DropdownConfig.Name = DropdownConfig.Name or "Players"
     DropdownConfig.Default = DropdownConfig.Default or ""
@@ -1465,6 +1465,7 @@ end
 
     return Dropdown
 end
+
 
 
 
