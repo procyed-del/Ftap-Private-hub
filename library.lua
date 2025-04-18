@@ -1350,13 +1350,14 @@ end
     end)
 
     local function AddPlayerButton(player)
-        local thumbnail, err = pcall(function()
+        -- Tenta obter a miniatura de cabeça do jogador de maneira segura
+        local success, thumbnail = pcall(function()
             return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
         end)
 
-        -- Se não conseguir obter a thumbnail, usa uma imagem padrão ou um valor alternativo
-        if not thumbnail then
-            thumbnail = "rbxassetid://7072706796"  -- Coloque um ID de imagem padrão aqui, se necessário
+        -- Se a obtenção da thumbnail falhar, usamos uma imagem padrão
+        if not success or not thumbnail then
+            thumbnail = "rbxassetid://7072706796"  -- Coloque o ID de imagem padrão aqui, se necessário
         end
 
         local PlayerBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
@@ -1392,13 +1393,13 @@ end
     end
 
     function Dropdown:Refresh()
-        -- Clear old buttons
+        -- Limpa os botões antigos
         for _, v in pairs(Dropdown.Buttons) do
             v:Destroy()
         end
         table.clear(Dropdown.Buttons)
 
-        -- Add new player buttons
+        -- Adiciona botões para os jogadores atuais
         for _, player in pairs(game.Players:GetPlayers()) do
             AddPlayerButton(player)
         end
@@ -1427,7 +1428,7 @@ end
         return DropdownConfig.Callback(Dropdown.Value)
     end
 
-    -- Listen for player changes
+    -- Ouve as mudanças nos jogadores
     game.Players.PlayerAdded:Connect(function(player)
         Dropdown:Refresh()
     end)
