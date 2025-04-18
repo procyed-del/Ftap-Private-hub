@@ -690,7 +690,11 @@ AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
 		end
 	end
 end)
+function changename(name)
+    WindowName.Text = name
+end
 
+			
 			
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
