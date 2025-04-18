@@ -1,3 +1,4 @@
+getgenv().gethui = function() return game.CoreGui end
 local success, result = pcall(function()
     return _G.firsttimeinjection
 end)
