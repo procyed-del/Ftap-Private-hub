@@ -1278,6 +1278,7 @@ end
 				return Dropdown
 			end
 			local Players = game:GetService("Players")
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 function ElementFunction:AddDropPlayer(config)
