@@ -1286,15 +1286,9 @@ end
     DropdownConfig.Flag = DropdownConfig.Flag or nil
     DropdownConfig.Save = DropdownConfig.Save or false
 
-    local Dropdown = {
-        Value = DropdownConfig.Default,
-        Buttons = {},
-        Toggled = false,
-        Type = "PlayerDropdown",
-        Save = DropdownConfig.Save
-    }
-
+    local Dropdown = {Value = DropdownConfig.Default, Players = {}, Buttons = {}, Toggled = false, Type = "PlayerDropdown", Save = DropdownConfig.Save}
     local MaxElements = 5
+
     local DropdownList = MakeElement("List")
 
     local DropdownContainer = AddThemeObject(SetProps(SetChildren(MakeElement("ScrollFrame", Color3.fromRGB(40, 40, 40), 4), {
@@ -1357,16 +1351,22 @@ end
     end)
 
     local function AddPlayerButton(player)
-        if not player or not player:IsA("Player") then return end
-
-        local success, thumbnail = pcall(function()
-            return game.Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
-        end)
-
-        if not success or not thumbnail then
-            thumbnail = "rbxassetid://7072706796"
+        -- Verifica se o jogador existe no jogo
+        if not player or not player:IsA("Player") or not game.Players:FindFirstChild(player.Name) then
+            return
         end
 
+        -- Tenta obter a miniatura de cabeça do jogador
+        local success, thumbnail = pcall(function()
+            return player:GetThumbnailAsync(Enum.ThumbnailType.HeadShot)
+        end)
+
+        -- Se a obtenção da thumbnail falhar, usamos uma imagem padrão
+        if not success or not thumbnail then
+            thumbnail = "rbxassetid://7072706796"  -- Coloque o ID de imagem padrão aqui, se necessário
+        end
+
+        -- Criação do botão do jogador
         local PlayerBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
             MakeElement("Corner", 0, 6),
             AddThemeObject(SetProps(MakeElement("Image", thumbnail), {
@@ -1391,6 +1391,7 @@ end
             ClipsDescendants = true
         }), "Divider")
 
+        -- Adiciona ação de clique
         AddConnection(PlayerBtn.MouseButton1Click, function()
             Dropdown:Set(player.Name)
             SaveCfg(game.GameId)
@@ -1400,11 +1401,13 @@ end
     end
 
     function Dropdown:Refresh()
+        -- Limpa os botões antigos
         for _, v in pairs(Dropdown.Buttons) do
             v:Destroy()
         end
         table.clear(Dropdown.Buttons)
 
+        -- Adiciona botões para os jogadores atuais
         for _, player in pairs(game.Players:GetPlayers()) do
             AddPlayerButton(player)
         end
@@ -1428,41 +1431,28 @@ end
             TweenService:Create(v, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
             TweenService:Create(v.DisplayName, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
         end
-
-        local selected = Dropdown.Buttons[Value]
-        if selected then
-            TweenService:Create(selected, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
-            TweenService:Create(selected.DisplayName, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
-        end
-
+        TweenService:Create(Dropdown.Buttons[Value], TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(Dropdown.Buttons[Value].DisplayName, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
         return DropdownConfig.Callback(Dropdown.Value)
     end
 
-    game.Players.PlayerAdded:Connect(function()
+    -- Ouve as mudanças nos jogadores
+    game.Players.PlayerAdded:Connect(function(player)
         Dropdown:Refresh()
     end)
 
-    game.Players.PlayerRemoving:Connect(function()
+    game.Players.PlayerRemoving:Connect(function(player)
         Dropdown:Refresh()
     end)
 
     AddConnection(Click.MouseButton1Click, function()
         Dropdown.Toggled = not Dropdown.Toggled
         DropdownFrame.F.Line.Visible = Dropdown.Toggled
-
-        TweenService:Create(DropdownFrame.F.Ico, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Rotation = Dropdown.Toggled and 180 or 0
-        }):Play()
-
-        local totalPlayers = #game.Players:GetPlayers()
-        if totalPlayers > MaxElements then
-            TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = Dropdown.Toggled and UDim2.new(1, 0, 0, 38 + (MaxElements * 28)) or UDim2.new(1, 0, 0, 38)
-            }):Play()
+        TweenService:Create(DropdownFrame.F.Ico, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = Dropdown.Toggled and 180 or 0}):Play()
+        if #Dropdown.Players > MaxElements then
+            TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Dropdown.Toggled and UDim2.new(1, 0, 0, 38 + (MaxElements * 28)) or UDim2.new(1, 0, 0, 38)}):Play()
         else
-            TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = Dropdown.Toggled and UDim2.new(1, 0, 0, DropdownList.AbsoluteContentSize.Y + 38) or UDim2.new(1, 0, 0, 38)
-            }):Play()
+            TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Dropdown.Toggled and UDim2.new(1, 0, 0, DropdownList.AbsoluteContentSize.Y + 38) or UDim2.new(1, 0, 0, 38)}):Play()
         end
     end)
 
@@ -1475,7 +1465,6 @@ end
 
     return Dropdown
 end
-
 
 
 
