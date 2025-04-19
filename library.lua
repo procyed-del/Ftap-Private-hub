@@ -688,17 +688,6 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
-	AddConnection(CloseBtn.MouseButton1Up, function()
-	MainWindow.Visible = false
-	UIHidden = true
-	OrionLib:MakeNotification({
-		Name = "Interface Hidden",
-		Content = "Tap M to reopen the interface",
-		Time = 5
-	})
-	WindowConfig.CloseCallback()
-end)
-
 local UIVisible = true
 
 AddConnection(CloseBtn.MouseButton1Up, function()
@@ -711,9 +700,24 @@ AddConnection(CloseBtn.MouseButton1Up, function()
 		Content = "Tap M to reopen the interface",
 		Time = 5
 	})
-	-- Se você realmente precisa chamar isso, mantenha, senão remova:
-	-- WindowConfig.CloseCallback()
+	
+	task.defer(function()
+		if WindowConfig and typeof(WindowConfig.CloseCallback) == "function" then
+			WindowConfig.CloseCallback()
+		end
+	end)
 end)
+
+AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
+	if gameProcessed then return end
+	if Input.KeyCode == Enum.KeyCode.M then
+		UIVisible = not UIVisible
+		MainWindow.Visible = UIVisible
+		buttonmodal.Modal = UIVisible
+		UIHidden = not UIVisible
+	end
+end)
+
 
 AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
 	if gameProcessed then return end
