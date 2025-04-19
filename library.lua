@@ -74,16 +74,17 @@ local OrionLib = {
 			TextDark = Color3.fromRGB(103, 23, 137)
 		},
 
-		Aqua = {
-			Main = Color3.fromRGB(29, 117, 151),
-			Second = Color3.fromRGB(30, 98, 166),
-			Stroke = Color3.fromRGB(46, 102, 234),
-			Divider = Color3.fromRGB(44, 149, 255),
-			Text = Color3.fromRGB(255, 255, 255),
-			TextDark = Color3.fromRGB(255, 255, 255)
-		}
+		Space = {
+	Main = Color3.fromRGB(35, 0, 60),         -- Roxo escuro, quase preto
+	Second = Color3.fromRGB(55, 0, 95),       -- Roxo mais vibrante
+	Stroke = Color3.fromRGB(120, 80, 255),    -- Roxo brilhante, estilo neon
+	Divider = Color3.fromRGB(180, 160, 255),  -- Roxo claro puxado pro branco
+	Text = Color3.fromRGB(255, 255, 255),     -- Branco puro, como estrelas
+	TextDark = Color3.fromRGB(200, 200, 200)  -- Branco suavizado para contraste
+}
+
 	},
-	SelectedTheme = "Aqua",
+	SelectedTheme = "Space",
 	Folder = nil,
 	SaveCfg = false
 }
