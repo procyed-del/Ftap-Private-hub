@@ -704,6 +704,7 @@ function OrionLib:MakeWindow(WindowConfig)
 			MainWindow.Visible = true
 			buttonmodal.Modal = true
 		elseif Input.KeyCode == Enum.KeyCode.M and not UIHidden then
+		MainWindow.Visible = false
 		buttonmodal.Modal = false
 		end
 	end)
