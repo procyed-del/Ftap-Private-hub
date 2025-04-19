@@ -69,7 +69,6 @@ local OrionLib = {
 	SaveCfg = false
 }
 
---Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
 
 local Success, Response = pcall(function()
@@ -689,6 +688,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
 AddConnection(CloseBtn.MouseButton1Up, function()
+userInputService.MouseIconEnabled = false
 		MainWindow.Visible = false
 		UIHidden = true
 		OrionLib:MakeNotification({
@@ -697,15 +697,21 @@ AddConnection(CloseBtn.MouseButton1Up, function()
 			Time = 5
 		})
 		WindowConfig.CloseCallback()
+userInputService.MouseIconEnabled = false
+					buttonmodal.Modal = false
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.M then
 						if UIHidden then
 										MainWindow.Visible = true
+							buttonmodal.Modal = true
+userInputService.MouseIconEnabled = true
 						elseif UIHidden == false then
 										WindowConfig.CloseCallback()
 										MainWindow.Visible = false
+userInputService.MouseIconEnabled = false
+							buttonmodal.Modal = false
 						end
 		end
 	end)
