@@ -55,57 +55,35 @@ local OrionLib = {
 	Connections = {},
 	Flags = {},
 	Themes = {
-    -- Tema Default
-    PurpleNeon = {
-        Main = Color3.fromRGB(25, 25, 25),
-        Second = Color3.fromRGB(32, 32, 32),
-        Stroke = Color3.fromRGB(60, 60, 60),
-        Divider = Color3.fromRGB(60, 60, 60),
-        Text = Color3.fromRGB(240, 240, 240),
-        TextDark = Color3.fromRGB(150, 150, 150)
-    },
+		Default = {
+                       Main = Color3.fromRGB(25, 25, 25),
+                       Second = Color3.fromRGB(32, 32, 32),
+                       Stroke = Color3.fromRGB(60, 60, 60),
+                       Divider = Color3.fromRGB(60, 60, 60),
+                       Text = Color3.fromRGB(240, 240, 240),
+                       TextDark = Color3.fromRGB(150, 150, 150)
+                },
 
-    -- Tema Roxo Neon
-    Ocean = {
-        Main = Color3.fromRGB(28, 14, 45),
-        Second = Color3.fromRGB(40, 19, 63),
-        Stroke = Color3.fromRGB(50, 51, 234),
-        Divider = Color3.fromRGB(50, 58, 237),
-        Text = Color3.fromRGB(255, 255, 255),
-        TextDark = Color3.fromRGB(199, 157, 237)
-    },
 
-    -- Tema Ocean
-    Sunset = {
-        Main = Color3.fromRGB(15, 23, 42),
-        Second = Color3.fromRGB(30, 41, 59),
-        Stroke = Color3.fromRGB(56, 189, 248),
-        Divider = Color3.fromRGB(14, 165, 233),
-        Text = Color3.fromRGB(241, 245, 249),
-        TextDark = Color3.fromRGB(148, 163, 184)
-    },
+		Moon = {
+			Main = Color3.fromRGB(25, 25, 25),
+			Second = Color3.fromRGB(32, 32, 32),
+			Stroke = Color3.fromRGB(60, 60, 60),
+			Divider = Color3.fromRGB(60, 60, 60),
+			Text = Color3.fromRGB(201, 37, 216),
+			TextDark = Color3.fromRGB(103, 23, 137)
+		},
 
-    -- Tema Sunset
-    Default = {
-        Main = Color3.fromRGB(39, 15, 15),
-        Second = Color3.fromRGB(51, 21, 21),
-        Stroke = Color3.fromRGB(251, 146, 60),
-        Divider = Color3.fromRGB(234, 88, 12),
-        Text = Color3.fromRGB(254, 243, 199),
-        TextDark = Color3.fromRGB(251, 146, 60)
-    },
-
-    -- Tema Mint
-    Mint = {
-        Main = Color3.fromRGB(15, 39, 27),
-        Second = Color3.fromRGB(20, 51, 35),
-        Stroke = Color3.fromRGB(52, 211, 153),
-        Divider = Color3.fromRGB(16, 185, 129),
-        Text = Color3.fromRGB(236, 253, 245),
-        TextDark = Color3.fromRGB(110, 231, 183)
-    }
-},
-	SelectedTheme = "Mint",
+		Aqua = {
+			Main = Color3.fromRGB(29, 117, 151),
+			Second = Color3.fromRGB(30, 98, 166),
+			Stroke = Color3.fromRGB(46, 102, 234),
+			Divider = Color3.fromRGB(44, 149, 255),
+			Text = Color3.fromRGB(255, 255, 255),
+			TextDark = Color3.fromRGB(255, 255, 255)
+		}
+	},
+	SelectedTheme = "Aqua",
 	Folder = nil,
 	SaveCfg = false
 }
