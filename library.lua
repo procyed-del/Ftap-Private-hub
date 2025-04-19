@@ -42,8 +42,6 @@ buttonmodal.Parent = screenGui
 buttonmodal.Modal = true
 
 
-
-
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -79,7 +77,7 @@ local Success, Response = pcall(function()
 end)
 
 if not Success then
-	warn("\n⌞Ra-Hub⌝ - Failed to load Feather Icons. Error code: " .. Response .. "\n")
+	warn("\nOrion Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
 end	
 
 local function GetIcon(IconName)
@@ -91,7 +89,7 @@ local function GetIcon(IconName)
 end   
 
 local Orion = Instance.new("ScreenGui")
-Orion.Name = "⌞Ra-Hub⌝"
+Orion.Name = "Orion"
 if syn then
 	syn.protect_gui(Orion)
 	Orion.Parent = game.CoreGui
@@ -101,12 +99,14 @@ end
 
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == Orion.Name and Interface ~= Orion then	
+		if Interface.Name == Orion.Name and Interface ~= Orion then
+			Interface:Destroy()
 		end
 	end
 else
 	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
 		if Interface.Name == Orion.Name and Interface ~= Orion then
+			Interface:Destroy()
 		end
 	end
 end
@@ -266,7 +266,7 @@ local function LoadCfg(Config)
 				end    
 			end)
 		else
-			warn("⌞Ra-Hub⌝Config Loader - Could not find ", a ,b)
+			warn("Orion Library Config Loader - Could not find ", a ,b)
 		end
 	end)
 end
@@ -519,7 +519,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroText = WindowConfig.IntroText or "⌞Ra-Hub⌝"
+	WindowConfig.IntroText = WindowConfig.IntroText or "Orion Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
@@ -699,36 +699,14 @@ function OrionLib:MakeWindow(WindowConfig)
 		WindowConfig.CloseCallback()
 	end)
 
-	local UserInputService = game:GetService("UserInputService")
-
-AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
-	if Input.KeyCode == Enum.KeyCode.M then
-	buttonmodal.Modal = not buttonmodal.Modal
-		if UserInputService:GetFocusedTextBox() == nil and not GameProcessed then
-			MainWindow.Visible = not MainWindow.Visible
-
-			if not MainWindow.Visible then
-userInputService.MouseIconEnabled = false
-				UIHidden = true
-				OrionLib:MakeNotification({
-					Name = "Interface Hidden",
-					Content = "Tap M to reopen the interface",
-					Time = 5
-				})
-				WindowConfig.CloseCallback()
-							else
-userInputService.MouseIconEnabled = true
-			end
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
+			MainWindow.Visible = true
+			buttonmodal.Modal = true
+					else
+buttonmodal.Modal = false
 		end
-	end
-end)
-function changename(name)
-    WindowName.Text = name
-end
-
-
-			
-			
+	end)
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
@@ -749,6 +727,9 @@ end
 		end
 		Minimized = not Minimized    
 	end)
+	function changename(name)
+ 	   WindowName.Text = name
+	end
 
 	local function LoadSequence()
 		MainWindow.Visible = false
@@ -1308,15 +1289,6 @@ end
 				end
 				return Dropdown
 			end
-
-
-
-
-
-
-
-
-
 			function ElementFunction:AddBind(BindConfig)
 				BindConfig.Name = BindConfig.Name or "Bind"
 				BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
@@ -1786,6 +1758,11 @@ end
 		return ElementFunction   
 	end  
 	
+	OrionLib:MakeNotification({
+		Name = "UI Library Upgrade",
+		Content = "New UI Library Available at sirius.menu/discord and sirius.menu/rayfield",
+		Time = 5
+	})
 	
 
 	
