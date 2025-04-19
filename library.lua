@@ -940,14 +940,12 @@ end)
 				end
 				return ParagraphFunction
 			end    
-					local Players = game:GetService("Players")
-
 local Players = game:GetService("Players")
 
 function ElementFunction:AddPlayerParagraph(userId)
 	userId = userId or 0
 
-	-- Busca nome de exibição e nome real do usuário
+	-- Pega DisplayName e Username com segurança
 	local successDN, displayName = pcall(function()
 		return Players:GetDisplayNameAsync(userId)
 	end)
@@ -959,19 +957,21 @@ function ElementFunction:AddPlayerParagraph(userId)
 	displayName = successDN and displayName or "Unknown"
 	username = successUN and username or "Unknown"
 
+	-- Cria o frame do parágrafo
 	local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 		Size = UDim2.new(1, 0, 0, 70),
 		BackgroundTransparency = 0.7,
 		Parent = ItemParent
 	}), {
-		-- Imagem do avatar
-		AddThemeObject(SetProps(MakeElement("Image", "", 0), {
+		-- Imagem do avatar (com cor roxa fixa)
+		SetProps(MakeElement("Image", "", 0), {
 			Name = "Avatar",
 			Size = UDim2.new(0, 60, 0, 60),
 			Position = UDim2.new(0, 5, 0, 5),
 			BackgroundTransparency = 1,
+			ImageColor3 = Color3.fromRGB(170, 85, 255),
 			Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
-		}), "None"),
+		}),
 
 		-- DisplayName (negrito)
 		AddThemeObject(SetProps(MakeElement("Label", displayName, 15), {
@@ -982,7 +982,7 @@ function ElementFunction:AddPlayerParagraph(userId)
 			TextXAlignment = Enum.TextXAlignment.Left
 		}), "Text"),
 
-		-- Username (abaixo)
+		-- Username (embaixo)
 		AddThemeObject(SetProps(MakeElement("Label", username, 13), {
 			Name = "Username",
 			Size = UDim2.new(1, -70, 0, 20),
@@ -995,25 +995,35 @@ function ElementFunction:AddPlayerParagraph(userId)
 		AddThemeObject(MakeElement("Stroke"), "Stroke")
 	}), "Second")
 
-	-- Função para trocar dinamicamente o usuário
+	-- Função dinâmica para trocar o jogador
 	local PlayerParagraph = {}
 	function PlayerParagraph:Set(newUserId)
 		newUserId = newUserId or 0
+
 		local okDN, dn = pcall(function()
 			return Players:GetDisplayNameAsync(newUserId)
 		end)
+
 		local okUN, un = pcall(function()
 			return Players:GetNameFromUserIdAsync(newUserId)
 		end)
-		ParagraphFrame.DisplayName.Text = (okDN and dn) or "Unknown"
-		ParagraphFrame.Username.Text = (okUN and un) or "Unknown"
-		ParagraphFrame.Avatar.Image =
-			"https://www.roblox.com/headshot-thumbnail/image?userId=" ..
-			newUserId .. "&width=420&height=420&format=png"
+
+		ParagraphFrame.DisplayName.Text = okDN and dn or "Unknown"
+		ParagraphFrame.Username.Text = okUN and un or "Unknown"
+		ParagraphFrame.Avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. newUserId .. "&width=420&height=420&format=png"
 	end
 
 	return PlayerParagraph
 end
+
+
+
+
+
+
+
+
+					
 
 			function ElementFunction:AddButton(ButtonConfig)
 				ButtonConfig = ButtonConfig or {}
