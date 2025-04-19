@@ -688,46 +688,27 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
-local UIVisible = true
-
-local UIVisible = true
-
--- Função para alternar visibilidade
-local function ToggleUI()
-	UIVisible = not UIVisible
-	MainWindow.Visible = UIVisible
-	buttonmodal.Modal = UIVisible
-	UIHidden = not UIVisible
-end
-
--- Tecla M para abrir/fechar
-AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
-	if gameProcessed then return end
-	if Input.KeyCode == Enum.KeyCode.M then
-		ToggleUI()
-	end
-end)
-
--- Clique no botão de fechar
 AddConnection(CloseBtn.MouseButton1Up, function()
-	if UIVisible then
-		ToggleUI()
+		MainWindow.Visible = false
+		UIHidden = true
 		OrionLib:MakeNotification({
 			Name = "Interface Hidden",
 			Content = "Tap M to reopen the interface",
 			Time = 5
 		})
+		WindowConfig.CloseCallback()
+	end)
 
-		-- Callback em defer para não interromper o funcionamento da tecla M
-		task.defer(function()
-			if WindowConfig and typeof(WindowConfig.CloseCallback) == "function" then
-				pcall(WindowConfig.CloseCallback) -- pcall evita erros caso algo esteja errado no callback
-			end
-		end)
-	end
-end)
-
-
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
+			MainWindow.Visible = true
+			UIHidden = false
+		elseif endInput.KeyCode == Enum.KeyCode.M and UIHidden == false then
+			MainWindow.Visible = false
+			UIHidden = true
+			WindowConfig.CloseCallback()
+		end
+	end)
 
 AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
 	if gameProcessed then return end
