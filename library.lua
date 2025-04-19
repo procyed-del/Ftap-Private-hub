@@ -941,39 +941,36 @@ end)
 				return ParagraphFunction
 			end    
 local Players = game:GetService("Players")
+local UserService = game:GetService("UserService")
 
 function ElementFunction:AddPlayerParagraph(userId)
 	userId = userId or 0
 
-	-- Pega DisplayName e Username com segurança
-	local successDN, displayName = pcall(function()
-		return Players:GetDisplayNameAsync(userId)
+	local displayName = "Unknown"
+	local username = "Unknown"
+
+	local success, result = pcall(function()
+		return UserService:GetUserInfosByUserIdsAsync({userId})
 	end)
 
-	local successUN, username = pcall(function()
-		return Players:GetNameFromUserIdAsync(userId)
-	end)
+	if success and result and result[1] then
+		displayName = result[1].DisplayName or "Unknown"
+		username = result[1].Username or "Unknown"
+	end
 
-	displayName = successDN and displayName or "Unknown"
-	username = successUN and username or "Unknown"
-
-	-- Cria o frame do parágrafo
 	local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 		Size = UDim2.new(1, 0, 0, 70),
 		BackgroundTransparency = 0.7,
 		Parent = ItemParent
 	}), {
-		-- Imagem do avatar (com cor roxa fixa)
 		SetProps(MakeElement("Image", "", 0), {
 			Name = "Avatar",
 			Size = UDim2.new(0, 60, 0, 60),
 			Position = UDim2.new(0, 5, 0, 5),
 			BackgroundTransparency = 1,
-			ImageColor3 = Color3.fromRGB(170, 85, 255),
 			Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
 		}),
 
-		-- DisplayName (negrito)
 		AddThemeObject(SetProps(MakeElement("Label", displayName, 15), {
 			Name = "DisplayName",
 			Size = UDim2.new(1, -70, 0, 20),
@@ -982,39 +979,43 @@ function ElementFunction:AddPlayerParagraph(userId)
 			TextXAlignment = Enum.TextXAlignment.Left
 		}), "Text"),
 
-		-- Username (embaixo)
 		AddThemeObject(SetProps(MakeElement("Label", username, 13), {
 			Name = "Username",
 			Size = UDim2.new(1, -70, 0, 20),
-			Position = UDim2.new(0, 70, 0, 35),
+			Position = UDim2.new(0, 70, 0, 35), -- Sempre na mesma posição
 			Font = Enum.Font.GothamSemibold,
 			TextXAlignment = Enum.TextXAlignment.Left
 		}), "TextDark"),
 
-		-- Stroke
 		AddThemeObject(MakeElement("Stroke"), "Stroke")
 	}), "Second")
 
-	-- Função dinâmica para trocar o jogador
 	local PlayerParagraph = {}
 	function PlayerParagraph:Set(newUserId)
 		newUserId = newUserId or 0
 
-		local okDN, dn = pcall(function()
-			return Players:GetDisplayNameAsync(newUserId)
+		local dname = "Unknown"
+		local uname = "Unknown"
+
+		local ok, data = pcall(function()
+			return UserService:GetUserInfosByUserIdsAsync({newUserId})
 		end)
 
-		local okUN, un = pcall(function()
-			return Players:GetNameFromUserIdAsync(newUserId)
-		end)
+		if ok and data and data[1] then
+			dname = data[1].DisplayName or "Unknown"
+			uname = data[1].Username or "Unknown"
+		end
 
-		ParagraphFrame.DisplayName.Text = okDN and dn or "Unknown"
-		ParagraphFrame.Username.Text = okUN and un or "Unknown"
+		ParagraphFrame.DisplayName.Text = dname
+		ParagraphFrame.DisplayName.Visible = true
+		ParagraphFrame.Username.Text = uname
+		ParagraphFrame.Username.Position = UDim2.new(0, 70, 0, 35)
 		ParagraphFrame.Avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. newUserId .. "&width=420&height=420&format=png"
 	end
 
 	return PlayerParagraph
 end
+
 
 
 
