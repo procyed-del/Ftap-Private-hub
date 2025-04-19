@@ -940,6 +940,107 @@ end)
 				end
 				return ParagraphFunction
 			end    
+					local Players = game:GetService("Players")
+
+function ElementFunction:AddPlayerParagraph(userId)
+    userId = userId or 0
+
+    -- tenta obter DisplayName e Username
+    local successDN, displayName = pcall(function()
+        return Players:GetDisplayNameAsync(userId)
+    end)
+    local successUN, username = pcall(function()
+        return Players:GetNameFromUserIdAsync(userId)
+    end)
+    displayName = successDN and displayName or "Unknown"
+    username    = successUN and username    or "Unknown"
+
+    -- cria o frame principal
+    local ParagraphFrame = AddThemeObject(
+        SetChildren(
+            SetProps(
+                MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5),
+                {
+                    Size = UDim2.new(1, 0, 0, 70),
+                    BackgroundTransparency = 0.7,
+                    Parent = ItemParent
+                }
+            ),
+            {
+                -- thumbnail do avatar
+                AddThemeObject(
+                    SetProps(
+                        MakeElement("Image", "", 0),
+                        {
+                            Name = "Avatar",
+                            Size = UDim2.new(0, 60, 0, 60),
+                            Position = UDim2.new(0, 5, 0, 5),
+                            BackgroundTransparency = 1,
+                            Image = "https://www.roblox.com/headshot-thumbnail/image?userId="
+                                    .. userId .. "&width=420&height=420&format=png"
+                        }
+                    ),
+                    "None"
+                ),
+
+                -- DisplayName (título em negrito)
+                AddThemeObject(
+                    SetProps(
+                        MakeElement("Label", displayName, 15),
+                        {
+                            Name = "DisplayName",
+                            Size = UDim2.new(1, -70, 0, 20),
+                            Position = UDim2.new(0, 70, 0, 10),
+                            Font = Enum.Font.GothamBold,
+                        }
+                    ),
+                    "Text"
+                ),
+
+                -- Username (nickname real)
+                AddThemeObject(
+                    SetProps(
+                        MakeElement("Label", username, 13),
+                        {
+                            Name = "Username",
+                            Size = UDim2.new(1, -70, 0, 20),
+                            Position = UDim2.new(0, 70, 0, 35),
+                            Font = Enum.Font.GothamSemibold,
+                        }
+                    ),
+                    "TextDark"
+                ),
+
+                -- borda/Stroke
+                AddThemeObject(
+                    MakeElement("Stroke"),
+                    "Stroke"
+                )
+            }
+        ),
+        "Second"
+    )
+
+    -- função para atualizar dinamicamente o parágrafo, caso queira trocar o userId
+    local PlayerParagraph = {}
+    function PlayerParagraph:Set(newUserId)
+        newUserId = newUserId or newUserId
+        local okDN, dn = pcall(function()
+            return Players:GetDisplayNameAsync(newUserId)
+        end)
+        local okUN, un = pcall(function()
+            return Players:GetNameFromUserIdAsync(newUserId)
+        end)
+        ParagraphFrame.DisplayName.Text = (okDN and dn) or "Unknown"
+        ParagraphFrame.Username.Text    = (okUN and un) or "Unknown"
+        ParagraphFrame.Avatar.Image     = 
+            "https://www.roblox.com/headshot-thumbnail/image?userId="
+            .. newUserId .. "&width=420&height=420&format=png"
+    end
+
+    return PlayerParagraph
+end
+
 			function ElementFunction:AddButton(ButtonConfig)
 				ButtonConfig = ButtonConfig or {}
 				ButtonConfig.Name = ButtonConfig.Name or "Button"
