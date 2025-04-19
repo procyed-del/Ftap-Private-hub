@@ -8,6 +8,7 @@ local userInputService = game:GetService("UserInputService")
 userInputService.MouseIconEnabled = true
 if success then
     if result then
+		warn("Multi Instance Detected!!!!!)
     return
     end
 else
