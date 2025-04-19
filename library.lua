@@ -700,11 +700,13 @@ AddConnection(CloseBtn.MouseButton1Up, function()
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
-			MainWindow.Visible = true
-		elseif endInput.KeyCode == Enum.KeyCode.M and UIHidden == false then
-			MainWindow.Visible = false
-			WindowConfig.CloseCallback()
+		if Input.KeyCode == Enum.KeyCode.M then
+						if UIHidden then
+										MainWindow.Visible = true
+						else UIHidden = false then
+										WindowConfig.CloseCallback()
+										MainWindow.Visible = false
+						end
 		end
 	end)
 
