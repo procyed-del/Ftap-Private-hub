@@ -69,8 +69,8 @@ local OrionLib = {
     Ocean = {
         Main = Color3.fromRGB(28, 14, 45),
         Second = Color3.fromRGB(40, 19, 63),
-        Stroke = Color3.fromRGB(147, 51, 234),
-        Divider = Color3.fromRGB(124, 58, 237),
+        Stroke = Color3.fromRGB(50, 51, 234),
+        Divider = Color3.fromRGB(50, 58, 237),
         Text = Color3.fromRGB(255, 255, 255),
         TextDark = Color3.fromRGB(199, 157, 237)
     },
