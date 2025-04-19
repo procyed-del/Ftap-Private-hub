@@ -689,26 +689,31 @@ function OrionLib:MakeWindow(WindowConfig)
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
 	AddConnection(CloseBtn.MouseButton1Up, function()
-		MainWindow.Visible = false
-		UIHidden = true
-		OrionLib:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap M to reopen the interface",
-			Time = 5
-		})
-		WindowConfig.CloseCallback()
-	end)
+	MainWindow.Visible = false
+	UIHidden = true
+	OrionLib:MakeNotification({
+		Name = "Interface Hidden",
+		Content = "Tap M to reopen the interface",
+		Time = 5
+	})
+	WindowConfig.CloseCallback()
+end)
 
-	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.M and UIHidden then
+AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
+	if gameProcessed then return end
+	if Input.KeyCode == Enum.KeyCode.M then
+		if UIHidden then
 			MainWindow.Visible = true
 			buttonmodal.Modal = true
-		elseif Input.KeyCode == Enum.KeyCode.M and not UIHidden then
-		MainWindow.Visible = false
-		UIHidden = true
-		buttonmodal.Modal = false
+			UIHidden = false
+		else
+			MainWindow.Visible = false
+			buttonmodal.Modal = false
+			UIHidden = true
 		end
-	end)
+	end
+end)
+
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
