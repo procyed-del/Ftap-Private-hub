@@ -691,27 +691,28 @@ AddConnection(CloseBtn.MouseButton1Up, function()
 userInputService.MouseIconEnabled = false
 		MainWindow.Visible = false
 		UIHidden = true
+		userInputService.MouseIconEnabled = false
+		buttonmodal.Modal = false
 		OrionLib:MakeNotification({
 			Name = "Interface Hidden",
 			Content = "Tap M to reopen the interface",
 			Time = 5
 		})
 		WindowConfig.CloseCallback()
-userInputService.MouseIconEnabled = false
-					buttonmodal.Modal = false
+		
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.M then
 						if UIHidden then
-										MainWindow.Visible = true
+									MainWindow.Visible = true
 							buttonmodal.Modal = true
-userInputService.MouseIconEnabled = true
+				userInputService.MouseIconEnabled = true
 						elseif UIHidden == false then
-										WindowConfig.CloseCallback()
 										MainWindow.Visible = false
-userInputService.MouseIconEnabled = false
+				userInputService.MouseIconEnabled = false
 							buttonmodal.Modal = false
+										WindowConfig.CloseCallback()
 						end
 		end
 	end)
