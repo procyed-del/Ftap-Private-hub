@@ -699,20 +699,32 @@ function OrionLib:MakeWindow(WindowConfig)
 	WindowConfig.CloseCallback()
 end)
 
+local UIVisible = true
+
+AddConnection(CloseBtn.MouseButton1Up, function()
+	UIVisible = false
+	MainWindow.Visible = false
+	buttonmodal.Modal = false
+	UIHidden = true
+	OrionLib:MakeNotification({
+		Name = "Interface Hidden",
+		Content = "Tap M to reopen the interface",
+		Time = 5
+	})
+	-- Se você realmente precisa chamar isso, mantenha, senão remova:
+	-- WindowConfig.CloseCallback()
+end)
+
 AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
 	if gameProcessed then return end
 	if Input.KeyCode == Enum.KeyCode.M then
-		if UIHidden then
-			MainWindow.Visible = true
-			buttonmodal.Modal = true
-			UIHidden = false
-		else
-			MainWindow.Visible = false
-			buttonmodal.Modal = false
-			UIHidden = true
-		end
+		UIVisible = not UIVisible
+		MainWindow.Visible = UIVisible
+		buttonmodal.Modal = UIVisible
+		UIHidden = not UIVisible
 	end
 end)
+
 
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
