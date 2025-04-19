@@ -75,12 +75,12 @@ local OrionLib = {
 		},
 
 		Space = {
-	Main = Color3.fromRGB(35, 0, 60),         -- Roxo escuro, quase preto
-	Second = Color3.fromRGB(55, 0, 95),       -- Roxo mais vibrante
-	Stroke = Color3.fromRGB(120, 80, 255),    -- Roxo brilhante, estilo neon
-	Divider = Color3.fromRGB(180, 160, 255),  -- Roxo claro puxado pro branco
-	Text = Color3.fromRGB(255, 255, 255),     -- Branco puro, como estrelas
-	TextDark = Color3.fromRGB(200, 200, 200)  -- Branco suavizado para contraste
+	Main = Color3.fromRGB(35, 0, 60),
+	Second = Color3.fromRGB(55, 0, 95),
+	Stroke = Color3.fromRGB(120, 80, 255),
+	Divider = Color3.fromRGB(180, 160, 255),
+	Text = Color3.fromRGB(255, 255, 255),
+	TextDark = Color3.fromRGB(200, 200, 200)
 }
 
 	},
