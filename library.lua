@@ -690,33 +690,43 @@ function OrionLib:MakeWindow(WindowConfig)
 
 local UIVisible = true
 
-AddConnection(CloseBtn.MouseButton1Up, function()
-	UIVisible = false
-	MainWindow.Visible = false
-	buttonmodal.Modal = false
-	UIHidden = true
-	OrionLib:MakeNotification({
-		Name = "Interface Hidden",
-		Content = "Tap M to reopen the interface",
-		Time = 5
-	})
-	
-	task.defer(function()
-		if WindowConfig and typeof(WindowConfig.CloseCallback) == "function" then
-			WindowConfig.CloseCallback()
-		end
-	end)
-end)
+local UIVisible = true
 
+-- Função para alternar visibilidade
+local function ToggleUI()
+	UIVisible = not UIVisible
+	MainWindow.Visible = UIVisible
+	buttonmodal.Modal = UIVisible
+	UIHidden = not UIVisible
+end
+
+-- Tecla M para abrir/fechar
 AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
 	if gameProcessed then return end
 	if Input.KeyCode == Enum.KeyCode.M then
-		UIVisible = not UIVisible
-		MainWindow.Visible = UIVisible
-		buttonmodal.Modal = UIVisible
-		UIHidden = not UIVisible
+		ToggleUI()
 	end
 end)
+
+-- Clique no botão de fechar
+AddConnection(CloseBtn.MouseButton1Up, function()
+	if UIVisible then
+		ToggleUI()
+		OrionLib:MakeNotification({
+			Name = "Interface Hidden",
+			Content = "Tap M to reopen the interface",
+			Time = 5
+		})
+
+		-- Callback em defer para não interromper o funcionamento da tecla M
+		task.defer(function()
+			if WindowConfig and typeof(WindowConfig.CloseCallback) == "function" then
+				pcall(WindowConfig.CloseCallback) -- pcall evita erros caso algo esteja errado no callback
+			end
+		end)
+	end
+end)
+
 
 
 AddConnection(UserInputService.InputBegan, function(Input, gameProcessed)
