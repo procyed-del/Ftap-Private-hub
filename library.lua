@@ -903,43 +903,48 @@ end)
 				return LabelFunction
 			end
 			function ElementFunction:AddParagraph(Text, Content)
-				Text = Text or "Text"
-				Content = Content or "Content"
+    Text = Text or "Text"
+    Content = Content or "Content"
 
-				local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
-					Size = UDim2.new(1, 0, 0, 30),
-					BackgroundTransparency = 0.7,
-					Parent = ItemParent
-				}), {
-					AddThemeObject(SetProps(MakeElement("Label", Text, 15), {
-						Size = UDim2.new(1, -12, 0, 14),
-						Position = UDim2.new(0, 12, 0, 10),
-						Font = Enum.Font.GothamBold,
-						Name = "Title"
-					}), "Text"),
-					AddThemeObject(SetProps(MakeElement("Label", "", 13), {
-						Size = UDim2.new(1, -24, 0, 0),
-						Position = UDim2.new(0, 12, 0, 26),
-						Font = Enum.Font.GothamSemibold,
-						Name = "Content",
-						TextWrapped = true
-					}), "TextDark"),
-					AddThemeObject(MakeElement("Stroke"), "Stroke")
-				}), "Second")
+    local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundTransparency = 0.7,
+        Parent = ItemParent
+    }), {
+        AddThemeObject(SetProps(MakeElement("Label", Text, 15), {
+            Size = UDim2.new(1, -12, 0, 14),
+            Position = UDim2.new(0, 12, 0, 10),
+            Font = Enum.Font.GothamBold,
+            Name = "Title",
+            TextXAlignment = Enum.TextXAlignment.Center,  -- Centralizando horizontalmente
+            TextYAlignment = Enum.TextYAlignment.Center   -- Centralizando verticalmente
+        }), "Text"),
+        AddThemeObject(SetProps(MakeElement("Label", "", 13), {
+            Size = UDim2.new(1, -24, 0, 0),
+            Position = UDim2.new(0, 12, 0, 26),
+            Font = Enum.Font.GothamSemibold,
+            Name = "Content",
+            TextWrapped = true,
+            TextXAlignment = Enum.TextXAlignment.Center,  -- Centralizando horizontalmente
+            TextYAlignment = Enum.TextYAlignment.Top      -- Alinhando ao topo para o texto do conteúdo
+        }), "TextDark"),
+        AddThemeObject(MakeElement("Stroke"), "Stroke")
+    }), "Second")
 
-				AddConnection(ParagraphFrame.Content:GetPropertyChangedSignal("Text"), function()
-					ParagraphFrame.Content.Size = UDim2.new(1, -24, 0, ParagraphFrame.Content.TextBounds.Y)
-					ParagraphFrame.Size = UDim2.new(1, 0, 0, ParagraphFrame.Content.TextBounds.Y + 35)
-				end)
+    AddConnection(ParagraphFrame.Content:GetPropertyChangedSignal("Text"), function()
+        ParagraphFrame.Content.Size = UDim2.new(1, -24, 0, ParagraphFrame.Content.TextBounds.Y)
+        ParagraphFrame.Size = UDim2.new(1, 0, 0, ParagraphFrame.Content.TextBounds.Y + 35)
+    end)
 
-				ParagraphFrame.Content.Text = Content
+    ParagraphFrame.Content.Text = Content
 
-				local ParagraphFunction = {}
-				function ParagraphFunction:Set(ToChange)
-					ParagraphFrame.Content.Text = ToChange
-				end
-				return ParagraphFunction
-			end    
+    local ParagraphFunction = {}
+    function ParagraphFunction:Set(ToChange)
+        ParagraphFrame.Content.Text = ToChange
+    end
+    return ParagraphFunction
+end
+
 local Players = game:GetService("Players")
 local UserService = game:GetService("UserService")
 
@@ -1977,38 +1982,41 @@ end
 		local ElementFunction = {}
 
 		function ElementFunction:AddSection(SectionConfig)
-			SectionConfig.Name = SectionConfig.Name or "Section"
+    SectionConfig.Name = SectionConfig.Name or "Section"
 
-			local SectionFrame = SetChildren(SetProps(MakeElement("TFrame"), {
-				Size = UDim2.new(1, 0, 0, 26),
-				Parent = Container
-			}), {
-				AddThemeObject(SetProps(MakeElement("Label", SectionConfig.Name, 14), {
-					Size = UDim2.new(1, -12, 0, 16),
-					Position = UDim2.new(0, 0, 0, 3),
-					Font = Enum.Font.GothamSemibold
-				}), "TextDark"),
-				SetChildren(SetProps(MakeElement("TFrame"), {
-					AnchorPoint = Vector2.new(0, 0),
-					Size = UDim2.new(1, 0, 1, -24),
-					Position = UDim2.new(0, 0, 0, 23),
-					Name = "Holder"
-				}), {
-					MakeElement("List", 0, 6)
-				}),
-			})
+    local SectionFrame = SetChildren(SetProps(MakeElement("TFrame"), {
+        Size = UDim2.new(1, 0, 0, 26),
+        Parent = Container
+    }), {
+        AddThemeObject(SetProps(MakeElement("Label", SectionConfig.Name, 14), {
+            Size = UDim2.new(1, -12, 0, 16),
+            Position = UDim2.new(0, 0, 0, 3),
+            Font = Enum.Font.GothamSemibold,
+            TextXAlignment = Enum.TextXAlignment.Center,  -- Centralizando horizontalmente
+            TextYAlignment = Enum.TextYAlignment.Center   -- Centralizando verticalmente
+        }), "TextDark"),
+        SetChildren(SetProps(MakeElement("TFrame"), {
+            AnchorPoint = Vector2.new(0, 0),
+            Size = UDim2.new(1, 0, 1, -24),
+            Position = UDim2.new(0, 0, 0, 23),
+            Name = "Holder"
+        }), {
+            MakeElement("List", 0, 6)
+        }),
+    })
 
-			AddConnection(SectionFrame.Holder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-				SectionFrame.Size = UDim2.new(1, 0, 0, SectionFrame.Holder.UIListLayout.AbsoluteContentSize.Y + 31)
-				SectionFrame.Holder.Size = UDim2.new(1, 0, 0, SectionFrame.Holder.UIListLayout.AbsoluteContentSize.Y)
-			end)
+    AddConnection(SectionFrame.Holder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+        SectionFrame.Size = UDim2.new(1, 0, 0, SectionFrame.Holder.UIListLayout.AbsoluteContentSize.Y + 31)
+        SectionFrame.Holder.Size = UDim2.new(1, 0, 0, SectionFrame.Holder.UIListLayout.AbsoluteContentSize.Y)
+    end)
 
-			local SectionFunction = {}
-			for i, v in next, GetElements(SectionFrame.Holder) do
-				SectionFunction[i] = v 
-			end
-			return SectionFunction
-		end	
+    local SectionFunction = {}
+    for i, v in next, GetElements(SectionFrame.Holder) do
+        SectionFunction[i] = v 
+    end
+    return SectionFunction
+end
+
 
 		for i, v in next, GetElements(Container) do
 			ElementFunction[i] = v 
