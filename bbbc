@@ -949,7 +949,7 @@ end
 local Players = game:GetService("Players")
 local UserService = game:GetService("UserService")
 
-function ElementFunction:Paragraph(userId)
+function ElementFunction:AddPlayerParagraph(userId)
 	userId = userId or 0
 
 	local displayName = "Unknown"
@@ -2149,7 +2149,7 @@ end
 	
 
 	
-	return TabFunction
+	return TabFunctionw
 end   
 
 function OrionLib:Destroy()
