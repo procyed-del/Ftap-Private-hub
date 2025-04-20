@@ -1421,247 +1421,32 @@ end
 			end
 
 
-function ElementFunction:AddPlayerDropdown(Config)
-    Config = Config or {}
-    Config.Name     = Config.Name     or "PlayerDropdown"
-    Config.Default  = Config.Default  or nil
-    Config.Callback = Config.Callback or function() end
-    Config.Flag     = Config.Flag     or nil
-    Config.Save     = Config.Save     or false
-
-    local Dropdown = {
-        SelectedPlayers = {},
-        Buttons = {},
-        Toggled = false,
-        Type    = "PlayerDropdown",
-        Save    = Config.Save,
-    }
-    local MaxElements = 5
-
-    local ButtonColor   = Color3.fromRGB(35, 0, 60)
-    local SelectedColor = Color3.fromRGB(55, 0, 95)
-
-    local DropdownList = MakeElement("List")
-    local DropdownContainer = AddThemeObject(
-        SetProps(
-            SetChildren(
-                MakeElement("ScrollFrame", Color3.fromRGB(40, 40, 40), 4),
-                { DropdownList }
-            ),
-            {
-                Parent           = ItemParent,
-                Position         = UDim2.new(0, 0, 0, 38),
-                Size             = UDim2.new(1, 0, 1, -38),
-                ClipsDescendants = true,
-            }
-        ),
-        "Divider"
-    )
-
-    local Click = SetProps(MakeElement("Button"), {
-        Size                   = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        AutoButtonColor        = false,
-        Name                   = "ClickRegion",
-    })
-
-    local DropdownFrame = AddThemeObject(
-        SetChildren(
-            SetProps(
-                MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5),
-                { Size = UDim2.new(1, 0, 0, 38), Parent = ItemParent, ClipsDescendants = true }
-            ),
-            {
-                DropdownContainer,
-                SetProps(
-                    SetChildren(MakeElement("TFrame"), {
-                        AddThemeObject(
-                            SetProps(MakeElement("Label", Config.Name, 15), {
-                                Size      = UDim2.new(1, -12, 1, 0),
-                                Position  = UDim2.new(0, 12, 0, 0),
-                                Font      = Enum.Font.GothamBold,
-                                Name      = "Content",
-                            }),
-                            "Text"
-                        ),
-                        AddThemeObject(
-                            SetProps(MakeElement("Image", "rbxassetid://7072706796"), {
-                                Size        = UDim2.new(0, 20, 0, 20),
-                                AnchorPoint = Vector2.new(0, 0.5),
-                                Position    = UDim2.new(1, -30, 0.5, 0),
-                                ImageColor3 = Color3.fromRGB(240, 240, 240),
-                                Name        = "Ico",
-                            }),
-                            "TextDark"
-                        ),
-                        SetProps(MakeElement("Label", "Selecione", 13), {
-                            Size           = UDim2.new(1, -40, 1, 0),
-                            Font           = Enum.Font.Gotham,
-                            Name           = "Selected",
-                            TextXAlignment = Enum.TextXAlignment.Right,
-                        }),
-                        SetProps(MakeElement("Frame"), {
-                            Size     = UDim2.new(1, 0, 0, 1),
-                            Position = UDim2.new(0, 0, 1, -1),
-                            Name     = "Line",
-                            Visible  = false,
-                        }),
-                        Click,
-                    }),
-                    {
-                        Size             = UDim2.new(1, 0, 0, 38),
-                        ClipsDescendants = true,
-                        Name             = "F",
-                    }
-                ),
-                AddThemeObject(MakeElement("Stroke"), "Stroke"),
-                MakeElement("Corner"),
-            }
-        ),
-        "Second"
-    )
-
-    AddConnection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-        DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
-    end)
-
-    AddConnection(Click.MouseButton1Click, function()
-        Dropdown.Toggled = not Dropdown.Toggled
-        DropdownFrame.F.Line.Visible = Dropdown.Toggled
-        TweenService:Create(
-            DropdownFrame.F.Ico,
-            TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            { Rotation = Dropdown.Toggled and 180 or 0 }
-        ):Play()
-        local targetHeight = 38
-        if Dropdown.Toggled then
-            local listHeight = math.min(DropdownList.AbsoluteContentSize.Y, MaxElements * 40)
-            targetHeight = 38 + listHeight
-        end
-        TweenService:Create(
-            DropdownFrame,
-            TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            { Size = UDim2.new(1, 0, 0, targetHeight) }
-        ):Play()
-    end)
-
-    local function AddOptions(playerList)
-        for _, player in ipairs(playerList) do
-            local OptionBtn = SetProps(
-                MakeElement("Button"),
-                {
-                    Parent               = DropdownContainer,
-                    Size                 = UDim2.new(1, 0, 0, 40),
-                    BackgroundColor3     = ButtonColor,
-                    BackgroundTransparency = 0,
-                    AutoButtonColor      = false,
-                    ClipsDescendants     = true,
-                }
-            )
-            AddThemeObject(SetProps(Instance.new("UIStroke"), {
-                Parent = OptionBtn,
-                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                Color = Color3.fromRGB(20, 20, 20),
-                Thickness = 1,
-                Transparency = 0.2,
-            }), "Divider")
-            MakeElement("Corner", 0, 6).Parent = OptionBtn
-
-            local thumbUrl = string.format(
-                "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png",
-                player.UserId
-            )
-            SetProps(MakeElement("Image", thumbUrl), {
-                Parent = OptionBtn,
-                Size = UDim2.new(0, 30, 0, 30),
-                Position = UDim2.new(0, 5, 0, 5),
-                BackgroundTransparency = 1,
-                Name = "Thumb",
-            })
-
-            AddThemeObject(
-                SetProps(MakeElement("Label", player.DisplayName, 14), {
-                    Parent = OptionBtn,
-                    Position = UDim2.new(0, 42, 0, 5),
-                    Size = UDim2.new(0.6, -10, 0, 18),
-                    Font = Enum.Font.GothamBold,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Name = "DisplayName",
-                }),
-                "Text"
-            )
-
-            AddThemeObject(
-                SetProps(MakeElement("Label", player.Name, 12), {
-                    Parent = OptionBtn,
-                    Position = UDim2.new(0, 42, 0, 22),
-                    Size = UDim2.new(0.6, -10, 0, 18),
-                    Font = Enum.Font.Gotham,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Name = "UserName",
-                }),
-                "TextDark"
-            )
-
-            AddConnection(OptionBtn.MouseButton1Click, function()
-                Dropdown:Set(player)
-                if Config.Save then SaveCfg(game.GameId) end
-            end)
-
-            Dropdown.Buttons[player] = OptionBtn
-        end
+function Dropdown:Set(player)
+    if self.SelectedPlayers[player] then
+        self.SelectedPlayers[player] = nil
+    else
+        self.SelectedPlayers[player] = true
     end
 
-    function Dropdown:Refresh(list, clear)
-        if clear then
-            for _, btn in pairs(self.Buttons) do btn:Destroy() end
-            table.clear(self.Buttons)
-        end
-        AddOptions(list)
+    -- Atualiza cores
+    for p, btn in pairs(self.Buttons) do
+        btn.BackgroundColor3 = self.SelectedPlayers[p] and SelectedColor or ButtonColor
     end
 
-    function Dropdown:Set(player)
-        if self.SelectedPlayers[player] then
-            self.SelectedPlayers[player] = nil
-        else
-            self.SelectedPlayers[player] = true
-        end
+    -- Atualiza texto no header
+    local selectedNames = {}
+    for p in pairs(self.SelectedPlayers) do
+        table.insert(selectedNames, p.DisplayName)
+    end
+    DropdownFrame.F.Selected.Text = #selectedNames > 0 and table.concat(selectedNames, ", ") or "Selecione"
 
-        for p, btn in pairs(self.Buttons) do
-            btn.BackgroundColor3 = self.SelectedPlayers[p] and SelectedColor or ButtonColor
-        end
-
-        local selectedNames = {}
-        for p in pairs(self.SelectedPlayers) do
-            table.insert(selectedNames, p.DisplayName)
-        end
-        DropdownFrame.F.Selected.Text = #selectedNames > 0 and table.concat(selectedNames, ", ") or "Selecione"
-
-        local selectedUsernames = {}
-        for p in pairs(self.SelectedPlayers) do
-            table.insert(selectedUsernames, p.Name)
-        end
-
-        return Config.Callback(selectedUsernames)
+    -- Callback com lista de nomes
+    local selectedUsernames = {}
+    for p in pairs(self.SelectedPlayers) do
+        table.insert(selectedUsernames, p.Name)
     end
 
-    local function updateList()
-        local allPlayers = Players:GetPlayers()
-        local filtered = {}
-        for _, p in ipairs(allPlayers) do
-            if p ~= Players.LocalPlayer then
-                table.insert(filtered, p)
-            end
-        end
-        Dropdown:Refresh(filtered, true)
-    end
-
-    Players.PlayerAdded:Connect(updateList)
-    Players.PlayerRemoving:Connect(updateList)
-
-    updateList()
-    if Config.Flag then OrionLib.Flags[Config.Flag] = Dropdown end
-    return Dropdown
+    return Config.Callback(selectedUsernames)
 end
 
 
@@ -2149,7 +1934,7 @@ end
 	
 
 	
-	return TabFunctionw
+	return TabFunction
 end   
 
 function OrionLib:Destroy()
