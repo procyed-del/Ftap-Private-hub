@@ -1413,7 +1413,7 @@ end
 				end
 				return Dropdown
 			end
-local Players = game:GetService("Players")
+					local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 function ElementFunction:AddPlayerDropdown(Config)
@@ -1518,15 +1518,12 @@ function ElementFunction:AddPlayerDropdown(Config)
                 "Divider"
             )
 
-            -- Thumbnail (sem tint de tema)
+            -- Thumbnail (sem tint)
             local thumbUrl = string.format(
                 "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", player.UserId
             )
             local Thumb = SetProps(MakeElement("Image", thumbUrl), {
-                Size = UDim2.new(0,30,0,30),
-                Position = UDim2.new(0,5,0,5),
-                BackgroundTransparency = 1,
-                Name = "Thumb"
+                Size = UDim2.new(0,30,0,30), Position = UDim2.new(0,5,0,5), BackgroundTransparency = 1, Name = "Thumb"
             })
             Thumb.Parent = OptionBtn
 
@@ -1569,8 +1566,17 @@ function ElementFunction:AddPlayerDropdown(Config)
         return Config.Callback(player)
     end
 
-    -- Dynamic updates
-    local function updateList() Dropdown:Refresh(Players:GetPlayers(), true) end
+    -- Dynamic updates (ignore LocalPlayer)
+    local function updateList()
+        local allPlayers = Players:GetPlayers()
+        local filtered = {}
+        for _, p in ipairs(allPlayers) do
+            if p ~= Players.LocalPlayer then
+                table.insert(filtered, p)
+            end
+        end
+        Dropdown:Refresh(filtered, true)
+    end
     Players.PlayerAdded:Connect(updateList)
     Players.PlayerRemoving:Connect(updateList)
 
