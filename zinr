@@ -1461,10 +1461,10 @@ function ElementFunction:AddPlayerDropdown(Config)
 
     -- botão de clique transparente, sobrepondo o header
     local Click = SetProps(MakeElement("Button"), {
-        Size              = UDim2.new(1, 0, 1, 0),
+        Size                   = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        AutoButtonColor   = false,
-        Name              = "ClickRegion",
+        AutoButtonColor        = false,
+        Name                   = "ClickRegion",
     })
 
     local DropdownFrame = AddThemeObject(
@@ -1503,10 +1503,10 @@ function ElementFunction:AddPlayerDropdown(Config)
                             TextXAlignment = Enum.TextXAlignment.Right,
                         }),
                         SetProps(MakeElement("Frame"), {
-                            Size    = UDim2.new(1, 0, 0, 1),
-                            Position= UDim2.new(0, 0, 1, -1),
-                            Name    = "Line",
-                            Visible = false,
+                            Size     = UDim2.new(1, 0, 0, 1),
+                            Position = UDim2.new(0, 0, 1, -1),
+                            Name     = "Line",
+                            Visible  = false,
                         }),
                         Click,
                     }),
@@ -1523,12 +1523,10 @@ function ElementFunction:AddPlayerDropdown(Config)
         "Second"
     )
 
-    -- ajustar altura do container ao conteúdo
     AddConnection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
         DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
     end)
 
-    -- abrir/fechar
     AddConnection(Click.MouseButton1Click, function()
         Dropdown.Toggled = not Dropdown.Toggled
         DropdownFrame.F.Line.Visible = Dropdown.Toggled
@@ -1549,62 +1547,67 @@ function ElementFunction:AddPlayerDropdown(Config)
         ):Play()
     end)
 
-    -- adiciona opções
     local function AddOptions(playerList)
         for _, player in ipairs(playerList) do
             local OptionBtn = SetProps(
-                SetChildren(MakeElement("Button", ButtonColor), {
-                    MakeElement("Corner", 0, 6),
-                    SetProps(Instance.new("UIStroke"), {
-                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                        Color             = Color3.fromRGB(20, 20, 20),
-                        Thickness         = 1,
-                        Transparency      = 0.2,
-                    })
-                }),
+                MakeElement("Button"),
                 {
                     Parent               = DropdownContainer,
                     Size                 = UDim2.new(1, 0, 0, 40),
+                    BackgroundColor3     = ButtonColor,
                     BackgroundTransparency = 0,
+                    AutoButtonColor      = false,    -- <— desliga o hover cinza
                     ClipsDescendants     = true,
                 }
             )
+            -- borda + canto arredondado
+            AddThemeObject(SetProps(Instance.new("UIStroke"), {
+                Parent = OptionBtn,
+                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                Color = Color3.fromRGB(20, 20, 20),
+                Thickness = 1,
+                Transparency = 0.2,
+            }), "Divider")
+            MakeElement("Corner", 0, 6).Parent = OptionBtn
 
+            -- Thumbnail
             local thumbUrl = string.format(
                 "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png",
                 player.UserId
             )
-            local Thumb = SetProps(MakeElement("Image", thumbUrl), {
-                Size               = UDim2.new(0, 30, 0, 30),
-                Position           = UDim2.new(0, 5, 0, 5),
+            SetProps(MakeElement("Image", thumbUrl), {
+                Parent = OptionBtn,
+                Size = UDim2.new(0, 30, 0, 30),
+                Position = UDim2.new(0, 5, 0, 5),
                 BackgroundTransparency = 1,
-                Name               = "Thumb",
+                Name = "Thumb",
             })
-            Thumb.Parent = OptionBtn
 
-            local DisplayLabel = AddThemeObject(
+            -- DisplayName
+            AddThemeObject(
                 SetProps(MakeElement("Label", player.DisplayName, 14), {
-                    Position           = UDim2.new(0, 42, 0, 5),
-                    Size               = UDim2.new(0.6, -10, 0, 18),
-                    Font               = Enum.Font.GothamBold,
-                    TextXAlignment     = Enum.TextXAlignment.Left,
-                    Name               = "DisplayName",
+                    Parent = OptionBtn,
+                    Position = UDim2.new(0, 42, 0, 5),
+                    Size = UDim2.new(0.6, -10, 0, 18),
+                    Font = Enum.Font.GothamBold,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Name = "DisplayName",
                 }),
                 "Text"
             )
-            DisplayLabel.Parent = OptionBtn
 
-            local UserLabel = AddThemeObject(
+            -- UserName
+            AddThemeObject(
                 SetProps(MakeElement("Label", player.Name, 12), {
-                    Position           = UDim2.new(0, 42, 0, 22),
-                    Size               = UDim2.new(0.6, -10, 0, 18),
-                    Font               = Enum.Font.Gotham,
-                    TextXAlignment     = Enum.TextXAlignment.Left,
-                    Name               = "UserName",
+                    Parent = OptionBtn,
+                    Position = UDim2.new(0, 42, 0, 22),
+                    Size = UDim2.new(0.6, -10, 0, 18),
+                    Font = Enum.Font.Gotham,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Name = "UserName",
                 }),
                 "TextDark"
             )
-            UserLabel.Parent = OptionBtn
 
             AddConnection(OptionBtn.MouseButton1Click, function()
                 Dropdown:Set(player)
