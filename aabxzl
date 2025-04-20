@@ -1430,11 +1430,12 @@ function ElementFunction:AddPlayerDropdown(Config)
     Config.Save     = Config.Save     or false
 
     local Dropdown = {
+        Value           = Config.Default,
+        Buttons         = {},
         SelectedPlayers = {},
-        Buttons = {},
-        Toggled = false,
-        Type    = "PlayerDropdown",
-        Save    = Config.Save,
+        Toggled         = false,
+        Type            = "PlayerDropdown",
+        Save            = Config.Save,
     }
     local MaxElements = 5
 
@@ -1604,7 +1605,12 @@ function ElementFunction:AddPlayerDropdown(Config)
             )
 
             AddConnection(OptionBtn.MouseButton1Click, function()
-                Dropdown:Set(player)
+                if Dropdown.SelectedPlayers[player] then
+                    Dropdown.SelectedPlayers[player] = nil
+                else
+                    Dropdown.SelectedPlayers[player] = true
+                end
+                Dropdown:Set()
                 if Config.Save then SaveCfg(game.GameId) end
             end)
 
@@ -1620,26 +1626,26 @@ function ElementFunction:AddPlayerDropdown(Config)
         AddOptions(list)
     end
 
-    function Dropdown:Set(player)
-        if self.SelectedPlayers[player] then
-            self.SelectedPlayers[player] = nil
-        else
-            self.SelectedPlayers[player] = true
-        end
-
-        for p, btn in pairs(self.Buttons) do
-            btn.BackgroundColor3 = self.SelectedPlayers[p] and SelectedColor or ButtonColor
-        end
-
-        local selectedNames = {}
-        for p in pairs(self.SelectedPlayers) do
-            table.insert(selectedNames, p.DisplayName)
-        end
-        DropdownFrame.F.Selected.Text = #selectedNames > 0 and table.concat(selectedNames, ", ") or "Selecione"
-
+    function Dropdown:Set()
         local selectedUsernames = {}
         for p in pairs(self.SelectedPlayers) do
-            table.insert(selectedUsernames, p.Name)
+            if Players:FindFirstChild(p.Name) then
+                table.insert(selectedUsernames, p.Name)
+            else
+                self.SelectedPlayers[p] = nil
+            end
+        end
+
+        -- Atualiza texto do dropdown com os nomes selecionados
+        if #selectedUsernames > 0 then
+            DropdownFrame.F.Selected.Text = table.concat(selectedUsernames, ", ")
+        else
+            DropdownFrame.F.Selected.Text = "Selecione"
+        end
+
+        -- Atualiza as cores dos botões
+        for p, btn in pairs(self.Buttons) do
+            btn.BackgroundColor3 = self.SelectedPlayers[p] and SelectedColor or ButtonColor
         end
 
         return Config.Callback(selectedUsernames)
@@ -1654,6 +1660,7 @@ function ElementFunction:AddPlayerDropdown(Config)
             end
         end
         Dropdown:Refresh(filtered, true)
+        Dropdown:Set() -- Atualiza interface após recarregar
     end
 
     Players.PlayerAdded:Connect(updateList)
