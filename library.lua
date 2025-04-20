@@ -1430,17 +1430,17 @@ function ElementFunction:AddPlayerDropdown(Config)
     Config.Save     = Config.Save     or false
 
     local Dropdown = {
-        Value   = Config.Default,
-        Buttons = {},
-        Toggled = false,
-        Type    = "PlayerDropdown",
-        Save    = Config.Save,
+        Value           = Config.Default,
+        Buttons         = {},
+        SelectedPlayers = {},
+        Toggled         = false,
+        Type            = "PlayerDropdown",
+        Save            = Config.Save,
     }
     local MaxElements = 5
 
-    -- DEFAULT: roxo bem escuro; SELECTED: roxo mais claro
-    local ButtonColor   = Color3.fromRGB(35, 0, 60)  -- Main
-    local SelectedColor = Color3.fromRGB(55, 0, 95)  -- Second
+    local ButtonColor   = Color3.fromRGB(35, 0, 60)
+    local SelectedColor = Color3.fromRGB(55, 0, 95)
 
     local DropdownList = MakeElement("List")
     local DropdownContainer = AddThemeObject(
@@ -1459,7 +1459,6 @@ function ElementFunction:AddPlayerDropdown(Config)
         "Divider"
     )
 
-    -- botão de clique transparente, sobrepondo o header
     local Click = SetProps(MakeElement("Button"), {
         Size                   = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -1556,11 +1555,10 @@ function ElementFunction:AddPlayerDropdown(Config)
                     Size                 = UDim2.new(1, 0, 0, 40),
                     BackgroundColor3     = ButtonColor,
                     BackgroundTransparency = 0,
-                    AutoButtonColor      = false,    -- <— desliga o hover cinza
+                    AutoButtonColor      = false,
                     ClipsDescendants     = true,
                 }
             )
-            -- borda + canto arredondado
             AddThemeObject(SetProps(Instance.new("UIStroke"), {
                 Parent = OptionBtn,
                 ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
@@ -1570,7 +1568,6 @@ function ElementFunction:AddPlayerDropdown(Config)
             }), "Divider")
             MakeElement("Corner", 0, 6).Parent = OptionBtn
 
-            -- Thumbnail
             local thumbUrl = string.format(
                 "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png",
                 player.UserId
@@ -1583,7 +1580,6 @@ function ElementFunction:AddPlayerDropdown(Config)
                 Name = "Thumb",
             })
 
-            -- DisplayName
             AddThemeObject(
                 SetProps(MakeElement("Label", player.DisplayName, 14), {
                     Parent = OptionBtn,
@@ -1596,7 +1592,6 @@ function ElementFunction:AddPlayerDropdown(Config)
                 "Text"
             )
 
-            -- UserName
             AddThemeObject(
                 SetProps(MakeElement("Label", player.Name, 12), {
                     Parent = OptionBtn,
@@ -1610,7 +1605,12 @@ function ElementFunction:AddPlayerDropdown(Config)
             )
 
             AddConnection(OptionBtn.MouseButton1Click, function()
-                Dropdown:Set(player)
+                if Dropdown.SelectedPlayers[player] then
+                    Dropdown.SelectedPlayers[player] = nil
+                else
+                    Dropdown.SelectedPlayers[player] = true
+                end
+                Dropdown:Set()
                 if Config.Save then SaveCfg(game.GameId) end
             end)
 
@@ -1626,13 +1626,29 @@ function ElementFunction:AddPlayerDropdown(Config)
         AddOptions(list)
     end
 
-    function Dropdown:Set(player)
-        self.Value = player
-        DropdownFrame.F.Selected.Text = player.DisplayName
-        for p, btn in pairs(self.Buttons) do
-            btn.BackgroundColor3 = (p == player) and SelectedColor or ButtonColor
+    function Dropdown:Set()
+        local selectedUsernames = {}
+        for p in pairs(self.SelectedPlayers) do
+            if Players:FindFirstChild(p.Name) then
+                table.insert(selectedUsernames, p.Name)
+            else
+                self.SelectedPlayers[p] = nil
+            end
         end
-        return Config.Callback(player)
+
+        -- Atualiza texto do dropdown com os nomes selecionados
+        if #selectedUsernames > 0 then
+            DropdownFrame.F.Selected.Text = table.concat(selectedUsernames, ", ")
+        else
+            DropdownFrame.F.Selected.Text = "Selecione"
+        end
+
+        -- Atualiza as cores dos botões
+        for p, btn in pairs(self.Buttons) do
+            btn.BackgroundColor3 = self.SelectedPlayers[p] and SelectedColor or ButtonColor
+        end
+
+        return Config.Callback(selectedUsernames)
     end
 
     local function updateList()
@@ -1644,6 +1660,7 @@ function ElementFunction:AddPlayerDropdown(Config)
             end
         end
         Dropdown:Refresh(filtered, true)
+        Dropdown:Set() -- Atualiza interface após recarregar
     end
 
     Players.PlayerAdded:Connect(updateList)
@@ -1653,6 +1670,7 @@ function ElementFunction:AddPlayerDropdown(Config)
     if Config.Flag then OrionLib.Flags[Config.Flag] = Dropdown end
     return Dropdown
 end
+
 
 
 
