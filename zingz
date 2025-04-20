@@ -1419,6 +1419,7 @@ end
 				end
 				return Dropdown
 			end
+
 function ElementFunction:AddPlayerDropdown(Config)
     Config = Config or {}
     Config.Name = Config.Name or "PlayerDropdown"
@@ -1429,13 +1430,15 @@ function ElementFunction:AddPlayerDropdown(Config)
 
     local Dropdown = { Value = Config.Default, Buttons = {}, Toggled = false, Type = "PlayerDropdown", Save = Config.Save }
     local MaxElements = 5
-    local SelectedColor = Color3.fromRGB(70, 50, 120) -- cor para o item selecionado
+
+    local ButtonColor = Color3.fromRGB(90, 60, 130)
+    local SelectedColor = Color3.fromRGB(50, 30, 90)
 
     local DropdownList = MakeElement("List")
     local DropdownContainer = AddThemeObject(
         SetProps(
             SetChildren(
-                MakeElement("ScrollFrame", nil, 4), -- remove a cor fixa
+                MakeElement("ScrollFrame", Color3.fromRGB(40, 40, 40), 4),
                 { DropdownList }
             ),
             {
@@ -1452,7 +1455,7 @@ function ElementFunction:AddPlayerDropdown(Config)
     local DropdownFrame = AddThemeObject(
         SetChildren(
             SetProps(
-                MakeElement("RoundFrame", nil, 0, 5),
+                MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5),
                 { Size = UDim2.new(1,0,0,38), Parent = ItemParent, ClipsDescendants = true }
             ),
             {
@@ -1508,45 +1511,35 @@ function ElementFunction:AddPlayerDropdown(Config)
 
     local function AddOptions(playerList)
         for _, player in ipairs(playerList) do
-            local OptionBtn = AddThemeObject(
-                SetProps(
-                    SetChildren(MakeElement("Button"), {
-                        MakeElement("Corner", 0, 6),
-                        SetProps(Instance.new("UIStroke"), {
-                            ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                            Color = Color3.fromRGB(20, 20, 20),
-                            Thickness = 1,
-                            Transparency = 0.2
-                        })
-                    }),
-                    {
-                        Parent = DropdownContainer,
-                        Size = UDim2.new(1,0,0,40),
-                        BackgroundTransparency = 0,
-                        ClipsDescendants = true
-                    }
-                ),
-                "Divider"
+            local OptionBtn = SetProps(
+                SetChildren(MakeElement("Button", ButtonColor), {
+                    MakeElement("Corner", 0, 6),
+                    SetProps(Instance.new("UIStroke"), {
+                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                        Color = Color3.fromRGB(20, 20, 20),
+                        Thickness = 1,
+                        Transparency = 0.2
+                    })
+                }),
+                {
+                    Parent = DropdownContainer,
+                    Size = UDim2.new(1,0,0,40),
+                    BackgroundTransparency = 0,
+                    ClipsDescendants = true
+                }
             )
 
             local thumbUrl = string.format(
                 "https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png", player.UserId
             )
             local Thumb = SetProps(MakeElement("Image", thumbUrl), {
-                Size = UDim2.new(0,30,0,30),
-                Position = UDim2.new(0,5,0,5),
-                BackgroundTransparency = 1,
-                Name = "Thumb"
+                Size = UDim2.new(0,30,0,30), Position = UDim2.new(0,5,0,5), BackgroundTransparency = 1, Name = "Thumb"
             })
             Thumb.Parent = OptionBtn
 
             local DisplayLabel = AddThemeObject(
                 SetProps(MakeElement("Label", player.DisplayName, 14), {
-                    Position = UDim2.new(0,42,0,5),
-                    Size = UDim2.new(0.6,-10,0,18),
-                    Font = Enum.Font.GothamBold,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Name = "DisplayName"
+                    Position = UDim2.new(0,42,0,5), Size = UDim2.new(0.6,-10,0,18), Font = Enum.Font.GothamBold, TextXAlignment = Enum.TextXAlignment.Left, Name = "DisplayName"
                 }),
                 "Text"
             )
@@ -1554,11 +1547,7 @@ function ElementFunction:AddPlayerDropdown(Config)
 
             local UserLabel = AddThemeObject(
                 SetProps(MakeElement("Label", player.Name, 12), {
-                    Position = UDim2.new(0,42,0,22),
-                    Size = UDim2.new(0.6,-10,0,18),
-                    Font = Enum.Font.Gotham,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Name = "UserName"
+                    Position = UDim2.new(0,42,0,22), Size = UDim2.new(0.6,-10,0,18), Font = Enum.Font.Gotham, TextXAlignment = Enum.TextXAlignment.Left, Name = "UserName"
                 }),
                 "TextDark"
             )
@@ -1585,11 +1574,7 @@ function ElementFunction:AddPlayerDropdown(Config)
         self.Value = player
         DropdownFrame.F.Selected.Text = player.DisplayName
         for p, btn in pairs(self.Buttons) do
-            if p == player then
-                btn.BackgroundColor3 = SelectedColor
-            else
-                btn.BackgroundColor3 = Themes.Divider or Color3.fromRGB(180,160,255)
-            end
+            btn.BackgroundColor3 = (p == player) and SelectedColor or ButtonColor
         end
         return Config.Callback(player)
     end
@@ -1612,7 +1597,6 @@ function ElementFunction:AddPlayerDropdown(Config)
     if Config.Flag then OrionLib.Flags[Config.Flag] = Dropdown end
     return Dropdown
 end
-
 
 
 
