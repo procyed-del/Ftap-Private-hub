@@ -852,6 +852,81 @@ function OrionLib:MakeWindow(WindowConfig)
 				end
 				return ParagraphFunction
 			end    
+local Players = game:GetService("Players")
+local UserService = game:GetService("UserService")
+
+function ElementFunction:AddPlayerParagraph(userId)
+	userId = userId or 0
+
+	local displayName = "Unknown"
+	local username = "Unknown"
+
+	local success, result = pcall(function()
+		return UserService:GetUserInfosByUserIdsAsync({userId})
+	end)
+
+	if success and result and result[1] then
+		displayName = result[1].DisplayName or "Unknown"
+		username = result[1].Username or "Unknown"
+	end
+
+	local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+		Size = UDim2.new(1, 0, 0, 70),
+		BackgroundTransparency = 0.7,
+		Parent = ItemParent
+	}), {
+		SetProps(MakeElement("Image", "", 0), {
+			Name = "Avatar",
+			Size = UDim2.new(0, 60, 0, 60),
+			Position = UDim2.new(0, 5, 0, 5),
+			BackgroundTransparency = 1,
+			Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
+		}),
+
+		AddThemeObject(SetProps(MakeElement("Label", displayName, 15), {
+			Name = "DisplayName",
+			Size = UDim2.new(1, -70, 0, 20),
+			Position = UDim2.new(0, 70, 0, 10),
+			Font = Enum.Font.GothamBold,
+			TextXAlignment = Enum.TextXAlignment.Left
+		}), "Text"),
+
+		AddThemeObject(SetProps(MakeElement("Label", username, 13), {
+			Name = "Username",
+			Size = UDim2.new(1, -70, 0, 20),
+			Position = UDim2.new(0, 70, 0, 35),
+			Font = Enum.Font.GothamSemibold,
+			TextXAlignment = Enum.TextXAlignment.Left
+		}), "TextDark"),
+
+		AddThemeObject(MakeElement("Stroke"), "Stroke")
+	}), "Second")
+
+	local PlayerParagraph = {}
+	function PlayerParagraph:Set(newUserId)
+		newUserId = newUserId or 0
+
+		local dname = "Unknown"
+		local uname = "Unknown"
+
+		local ok, data = pcall(function()
+			return UserService:GetUserInfosByUserIdsAsync({newUserId})
+		end)
+
+		if ok and data and data[1] then
+			dname = data[1].DisplayName or "Unknown"
+			uname = data[1].Username or "Unknown"
+		end
+
+		ParagraphFrame.DisplayName.Text = dname
+		ParagraphFrame.DisplayName.Visible = true
+		ParagraphFrame.Username.Text = uname
+		ParagraphFrame.Username.Position = UDim2.new(0, 70, 0, 35)
+		ParagraphFrame.Avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. newUserId .. "&width=420&height=420&format=png"
+	end
+
+	return PlayerParagraph
+end
 			function ElementFunction:AddButton(ButtonConfig)
 				ButtonConfig = ButtonConfig or {}
 				ButtonConfig.Name = ButtonConfig.Name or "Button"
@@ -940,81 +1015,6 @@ function OrionLib:MakeWindow(WindowConfig)
 						Name = "Ico"
 					}),
 				})
-local Players = game:GetService("Players")
-local UserService = game:GetService("UserService")
-
-function ElementFunction:AddPlayerParagraph(userId)
-	userId = userId or 0
-
-	local displayName = "Unknown"
-	local username = "Unknown"
-
-	local success, result = pcall(function()
-		return UserService:GetUserInfosByUserIdsAsync({userId})
-	end)
-
-	if success and result and result[1] then
-		displayName = result[1].DisplayName or "Unknown"
-		username = result[1].Username or "Unknown"
-	end
-
-	local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
-		Size = UDim2.new(1, 0, 0, 70),
-		BackgroundTransparency = 0.7,
-		Parent = ItemParent
-	}), {
-		SetProps(MakeElement("Image", "", 0), {
-			Name = "Avatar",
-			Size = UDim2.new(0, 60, 0, 60),
-			Position = UDim2.new(0, 5, 0, 5),
-			BackgroundTransparency = 1,
-			Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
-		}),
-
-		AddThemeObject(SetProps(MakeElement("Label", displayName, 15), {
-			Name = "DisplayName",
-			Size = UDim2.new(1, -70, 0, 20),
-			Position = UDim2.new(0, 70, 0, 10),
-			Font = Enum.Font.GothamBold,
-			TextXAlignment = Enum.TextXAlignment.Left
-		}), "Text"),
-
-		AddThemeObject(SetProps(MakeElement("Label", username, 13), {
-			Name = "Username",
-			Size = UDim2.new(1, -70, 0, 20),
-			Position = UDim2.new(0, 70, 0, 35), -- Sempre na mesma posição
-			Font = Enum.Font.GothamSemibold,
-			TextXAlignment = Enum.TextXAlignment.Left
-		}), "TextDark"),
-
-		AddThemeObject(MakeElement("Stroke"), "Stroke")
-	}), "Second")
-
-	local PlayerParagraph = {}
-	function PlayerParagraph:Set(newUserId)
-		newUserId = newUserId or 0
-
-		local dname = "Unknown"
-		local uname = "Unknown"
-
-		local ok, data = pcall(function()
-			return UserService:GetUserInfosByUserIdsAsync({newUserId})
-		end)
-
-		if ok and data and data[1] then
-			dname = data[1].DisplayName or "Unknown"
-			uname = data[1].Username or "Unknown"
-		end
-
-		ParagraphFrame.DisplayName.Text = dname
-		ParagraphFrame.DisplayName.Visible = true
-		ParagraphFrame.Username.Text = uname
-		ParagraphFrame.Username.Position = UDim2.new(0, 70, 0, 35)
-		ParagraphFrame.Avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. newUserId .. "&width=420&height=420&format=png"
-	end
-
-	return PlayerParagraph
-end
 
 				local ToggleFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
